@@ -1,0 +1,11 @@
+{
+  "token":"ODA0NDY4NDQxMTY3MTY3NTY4.YBMxng.ZiL_hlybqu3yccq2ejrJ9_cM3JE",
+  "bdd":"mongodb+srv://bot:FIVG55fOlsX2GDYY@bolducs.39zzq.mongodb.net/bot",
+  "prefix":"B!",
+  "admin":"804483073437204491",
+  "channels": {
+    "archives": "804480347592589312",
+    "transactions": "804480235919114320",
+    "tire": "803048182077849621"
+  }
+}

@@ -31,5 +31,5 @@ async function fct (message, args, client, db, tools) {
         {upsert: true})
 
     await message.channel.send(`Voici vos ${amount} Bolducs <:1B:805427963972943882>`)
-    client.channels.cache.get('804480347592589312').send(`${message.member.tag} a gagné ${amount} bolducs avec la commande claim.`)
+    client.channels.cache.get('804480347592589312').send(`${message.author.tag} a gagné ${amount} bolducs avec la commande claim.`)
 }

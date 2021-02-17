@@ -9,7 +9,7 @@ module.exports = {
 
 
 async function run (message, args) {
-    if (!message.member.roles.cache.some(r => r.id === '804483073437204491')) return
+    if (!message.member.roles.cache.some(r => r.id === '802951934406557738')) return
 
     let nbr = args.join("")
     if (nbr === "" || nbr === undefined || isNaN(nbr)) return message.channel.send("<:ui_5:483262304868106251> Il faut indiquer le nombre de message à suprimer et écrire la commande ainsi `!clean x` (x étant le nombre de message à suprimer).")

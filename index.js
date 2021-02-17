@@ -19,6 +19,10 @@ db.once('open', async () => {
     console.log("\x1b[0m", "\n   " + tools.date(), "\n   > Connexion à la base réussie")
 
     settings = await db.collection('settings').find({id: 'ID'})
+    let tomorrow = new Date()
+        tomorrow.setMinutes(0)
+        tomorrow.setHours(0)
+    await db.collection('scheduler').updateOne({name:'daily'}, {$set: {date: tomorrow}}, {upsert: true})
     await loadFiles ()
     await client.login(config.token)
     await tools.schedulerUpdate (db)

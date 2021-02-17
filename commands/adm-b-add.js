@@ -9,7 +9,7 @@ module.exports = {
 }
 
 async function fct (message, args, client, db) {
- //   if (!message.member.roles.cache.some(r => r.id === '804483073437204491')) return
+    if (!message.member.roles.cache.some(r => r.id === '804483073437204491')) return
 
     let member = message.mentions.members.first()
     if (!member) return message.channel.send('Il faut mentionner un membre pour lui donner des bolducs.')

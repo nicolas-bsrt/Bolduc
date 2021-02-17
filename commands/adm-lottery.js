@@ -36,7 +36,7 @@ async function fct (message, args, client, db) {
     let announce = await client.channels.cache.get('804768383626903552').send(`@everyone Mégaloterie X2 !!! Appuyez sur 🎉 pour participer! (Prix ${args[1]} Bolducs <:1B:805427963972943882>)\nLe total des Bolducs mit en jeu sera multiplié par deux et le vainqueur emportera le total !\n\nVous avez ${args[0]} minute${args[0] > 1 ? "s" : ""} pour participer.`)
     await db.collection('lotteries').insertOne({id: message.member.id, type: 'megaLottery', amount: +args[1], entrants: [], message: announce.id, start: (new Date().getTime() + args[0]*60000)})
     await announce.react('🎉')
-    megaLotteryStore[message.member.id] = setTimeout(draw, 60000*(+args[0]), message, db, client)
+    megaLotteryStore[message.member.id] = setTimeout(draw, 60000*(+args[0]), message.member.id, db, client)
 }
 async function add (reaction, user, db, tools) {
     let lottery = await db.collection('lotteries').findOne({message: reaction.message.id, type: 'megaLottery'})
@@ -55,14 +55,14 @@ async function rem (reaction, user, db) {
     if (!lottery) return
 
     if (!lottery.entrants.includes(user.id)) return user.send("Vous n'êtes pas inscrit à cette méga-loterie.")
-    await db.collection('lotteries').updateOne({message: reaction.message.id, type: 'megaLottery'}, {$pull: {entrants: message.member.id}})
+    await db.collection('lotteries').updateOne({message: reaction.message.id, type: 'megaLottery'}, {$pull: {entrants: user.id}})
     await db.collection('members').updateOne({id: user.id}, {$inc: {bolducs: lottery.amount, dailyLoss: -lottery.amount}})
-    await user.send(`J'annule votre participation à la loterie de ${challenger.displayName}.`)
+    await user.send(`J'annule votre participation à la méga-loterie.`)
 }
 
-async function draw (message, db, client) {
-    delete megaLotteryStore[message.member.id]
-    let lottery = await db.collection('lotteries').findOne({id: message.member.id, type: 'megaLottery'}),
+async function draw (id, db, client) {
+    delete megaLotteryStore[id]
+    let lottery = await db.collection('lotteries').findOne({id: id, type: 'megaLottery'}),
         isHere = false,
         winner,
         entrants = lottery.entrants.length

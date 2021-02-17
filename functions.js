@@ -23,7 +23,7 @@ function date () {
     )
 }
 function howManyLast (t1, t2) {
-    let diff = 24* 3600 - Math.ceil((t1 - t2) / 1000)
+    let diff = Math.ceil((t2 - t1) / 1000)
     if (diff < 60) return 'quelques secondes'
     if (diff < 3600) return `${Math.ceil(diff/60)} minute${diff > 60 ? 's' : ''}`
     return `${Math.ceil(diff/3600)} heure${diff > 3600 ? 's' : ''}`

@@ -72,7 +72,7 @@ async function schedulerAction (client, db, event) {
             await SchBalloonPop (client, db)
             break
         case "balloonDisappear":
-            await SchBalloonFly (client, db)
+            await SchBalloonFly (client, db, event)
             break
     }
 }
@@ -112,7 +112,7 @@ async function SchBalloonPop (client, db) {
     await db.collection('scheduler').insertOne({id:'balloons', name:'balloonDisappear', date: pop})
     await client.channels.cache.get('803048182077849621').send('Oh, voilà un ballon ! :balloon:')
 }
-async function SchBalloonFly (client, db) {
-    await db.collection('scheduler').deleteOne({id:'balloons', $min: "$date"})
+async function SchBalloonFly (client, db, event) {
+    await db.collection('scheduler').deleteOne({id:'balloons', date: event.date})
     await client.channels.cache.get('803048182077849621').send("Pouf, le ballon s'est envolé ! :dash:")
 }

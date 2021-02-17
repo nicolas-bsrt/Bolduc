@@ -148,6 +148,6 @@ async function msgToBolducs (message) {
     // on ajoute un bolduc à chaque message
     await db.collection('members').updateOne(
         {id: message.member.id},
-        {$inc: {bolducs: 1}},
+        {$inc: {bolducs: 1, dailyBenefit: 1}},
         {upsert: true})
 }

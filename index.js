@@ -66,7 +66,7 @@ client.on('raw', async event => {
     client.emit(events[event.t], reaction, user)
 })
 client.on('settingsUpdate', async () => {
-    settings = await db.collection('settings').find({id: 'ID'})
+    settings = await db.collection('settings').findOne({id: 'ID'})
 })
 
 

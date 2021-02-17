@@ -12,7 +12,7 @@ let megaLotteryStore = {}
 
 async function fct (message, args, client, db) {
     if (!message.member.roles.cache.some(r => r.id === '804483073437204491')) return
-    let lottery = await db.collection('lotteries').find({id: message.member.id, type: 'megaLottery'})
+    let lottery = await db.collection('lotteries').findOne({id: message.member.id, type: 'megaLottery'})
     if (lottery) return message.channel.send("Vous ne pouvez pas lancer deux méga-loteries en même temps, attendez sa fin ou annulez la avant d'en lancer une nouvelle.")
 
     if (!args[0] || isNaN(args[0]) || 0 > args[0]) return message.channel.send('Il faut me donner la durée de la méga-loterie (en minutes).')
@@ -63,7 +63,7 @@ async function rem (reaction, user, db) {
 
 async function draw (message, db, client) {
     delete megaLotteryStore[message.member.id]
-    let lottery = await db.collection('lotteries').find({id: message.member.id, type: 'megaLottery'}),
+    let lottery = await db.collection('lotteries').findOne({id: message.member.id, type: 'megaLottery'}),
         isHere = false,
         winner,
         entrants = lottery.entrants.length

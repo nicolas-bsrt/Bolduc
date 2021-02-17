@@ -80,7 +80,7 @@ async function remove (message, args, client, db) {
 
 
     if (challenger) {
-        lottery = await db.collection('lotteries').find({id: challenger.id, type: 'lottery'})
+        lottery = await db.collection('lotteries').findOne({id: challenger.id, type: 'lottery'})
         if (!lottery) return message.channel.send("Le membre que vous avez mentionné n'a pas lancé de lotterie.")
         if (!lottery.entrants.includes(message.member.id)) return message.channel.send("Vous n'êtes pas inscrit à la lotterie lancée par le membre mentionné.")
         lID = lottery.id
@@ -113,7 +113,7 @@ async function deleteAndGiveBack (db, lottery) {
 
 async function draw (message, db, client) {
     delete lotteryStore[message.member.id]
-    let lottery = await db.collection('lotteries').find({id: message.member.id, type: 'lottery'}),
+    let lottery = await db.collection('lotteries').findOne({id: message.member.id, type: 'lottery'}),
         isHere = false,
         winner,
         entrants = lottery.entrants.length

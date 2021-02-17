@@ -94,7 +94,7 @@ async function SchDaily (client, db) {
         benefit += m.dailyBenefit
         loss += m.dailyLoss
     }
-    await db.collection('members').updateMany({}, {dailyBenefit: 0, dailyLoss: 0})
+    await db.collection('members').updateMany({}, {$set: {dailyBenefit: 0, dailyLoss: 0}})
     await db.collection
     client.channels.cache.get('804480347592589312').send(new Discord.MessageEmbed().setColor('#ffc700').setDescription(
         `Gains : ${benefit}\nPertes : -${loss}\nBalance quotidienne : ${benefit - loss}`

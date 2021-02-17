@@ -94,17 +94,17 @@ client.on("messageReactionAdd", (reaction, user) => {
     if (!user || user.bot || client.user.id !== reaction.message.author.id) return
     if (settings.shop.includes(reaction.message.id) && ['👑','💎','🪧','📣','📡'].includes(reaction.emoji.name))
         return commands.shop.shop (reaction, user, db, settings)
+    if (reaction.message.channel.id === '804768383626903552' && reaction.emoji.name === "🎉")
+        return commands.createmegaloterie.add (reaction, user, db, tools)
     if (reaction.message.embeds)
         return embedSwitch (reaction, user)
-    if (reaction.message.channel.id !== '804768383626903552' && reaction.emoji.name === "🎉")
-        return commands.createmegaloterie.add (reaction, user, db, tools)
 })
 client.on("messageReactionRemove", (reaction, user) => {
-    if (!user || user.bot) return
-    if (reaction.message.embeds && client.user.id === reaction.message.author.id)
-        return embedSwitch (reaction, user)
-    if (reaction.message.channel.id !== '804768383626903552' && reaction.emoji.name === "🎉")
+    if (!user || user.bot || client.user.id !== reaction.message.author.id) return
+    if (reaction.message.channel.id === '804768383626903552' && reaction.emoji.name === "🎉")
         return commands.createmegaloterie.rem (reaction, user, db)
+    if (reaction.message.embeds)
+        return embedSwitch (reaction, user)
 })
 client.on("message", async message => {
     if (message.author.bot || message.channel.type !== "text") return

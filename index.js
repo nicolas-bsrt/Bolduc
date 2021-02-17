@@ -62,6 +62,8 @@ client.on('settingsUpdate', async () => {
 
 
 client.on('guildMemberAdd', async (member) => {
+    if (member.guild.id !== '802951636850180107') return
+
     let invitations = await client.guilds.cache.get('802951636850180107').fetchInvites()
     for (let inv in invitations.array()) {
         if (!invites[inv.code] || inv.uses !== invites[inv.code].uses) {
@@ -76,8 +78,8 @@ client.on('guildMemberAdd', async (member) => {
     }
 
 
-    if (member.guild.id === '802951636850180107') await member.roles.add('803294699569545246')
-
+    await member.roles.add('803294699569545246')
+    member.guild.channels.cache.get('802951636850180110').send(`Bienvenue à ${member} dans La Communauté des Bolducs !`)
 })
 client.on("messageReactionAdd", (reaction, user) => {
     if (!user || user.bot || client.user.id !== reaction.message.author.id) return

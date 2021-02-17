@@ -15,7 +15,7 @@ module.exports = {
         await tools.schedulerUpdate (db, client)
     },
     conf: {
-        command: "shot ",
+        command: "shot",
         aliases: ["pan"],
         help: "Tire sur un ballon donnant de 20 à 500 bolducs (dans le salon #le-tire-au-bolducs)."
     }

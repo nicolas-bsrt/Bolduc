@@ -91,8 +91,8 @@ async function SchDaily (client, db) {
         loss = 0
     members = await members.toArray()
     for (let m of members) {
-        benefit += m.dailyBenefit
-        loss += m.dailyLoss
+        benefit += (m.dailyBenefit || 0)
+        loss += (m.dailyLoss || 0)
     }
     await db.collection('members').updateMany({}, {$set: {dailyBenefit: 0, dailyLoss: 0}})
     await db.collection

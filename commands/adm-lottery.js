@@ -35,8 +35,7 @@ async function fct (message, args, client, db) {
     if (message.channel.id !== '804768383626903552') message.channel.send('Je lance la Mégaloterie dans <#804768383626903552>.')
     let announce = await client.channels.cache.get('804768383626903552').send(`@everyone Mégaloterie X2 !!! Appuyez sur :white_check_mark: pour participer! (Prix ${args[1]} Bolducs <:1B:805427963972943882>)\nLe total des Bolducs mit en jeu sera multiplié par deux et le vainqueur emportera le total !`)
     await db.collection('lotteries').insertOne({id: message.member.id, type: 'megaLottery', amount: +args[1], entrants: [], message: announce.id, start: (new Date().getTime() + args[0]*60000)})
-    await announce.react('✅')
-    await announce.react('❌')
+    await announce.react('🎉')
     megaLotteryStore[message.member.id] = setTimeout(draw, 60000*(+args[0]), message, db, client)
 }
 async function add (reaction, user, db, tools) {

@@ -30,7 +30,7 @@ function howManyLast (t1, t2) {
 }
 
 
-async function schedulerUpdate (db) {
+async function schedulerUpdate (db, client) {
     if (nextEvent) clearTimeout(nextEvent)
     let scheduler = await db.collection('scheduler').find()
         scheduler = await scheduler.toArray()
@@ -41,7 +41,7 @@ async function schedulerUpdate (db) {
 
     if (!event || !event.name) {
         // Rien a faire, on revient dans 2h
-        nextEvent = setTimeout(() => {schedulerUpdate()}, 120*60000)
+        nextEvent = setTimeout(() => {schedulerUpdate(db, client)}, 120*60000)
     }
     else {
         let diff = event.date.getTime() - new Date().getTime()
@@ -50,7 +50,7 @@ async function schedulerUpdate (db) {
             // Evènement en retard. Début de l'action
             await schedulerAction (client, db, event).catch(err => console.log(err))
             // Action terminée, on relance
-            await schedulerUpdate ()
+            await schedulerUpdate (db, client)
         }
         else {
             // Evènement futur. Lancement du compte à rebour
@@ -58,7 +58,7 @@ async function schedulerUpdate (db) {
                 // Compte à rebour terminé, on lance l'action
                 await schedulerAction (client, db, event).catch(err => console.log(err))
                 // Action terminée, on relance
-                await schedulerUpdate ()
+                await schedulerUpdate (db, client)
             }, diff)
         }
     }

@@ -25,7 +25,7 @@ db.once('open', async () => {
     await db.collection('scheduler').updateOne({name:'daily'}, {$set: {date: tomorrow}}, {upsert: true})
     await loadFiles ()
     await client.login(config.token)
-    await tools.schedulerUpdate (db)
+    await tools.schedulerUpdate (db, client)
 })
 
 

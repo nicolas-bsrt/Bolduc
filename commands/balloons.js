@@ -12,7 +12,7 @@ module.exports = {
             {upsert: true})
         message.channel.send(`Vous avez touché le balon ! Vous gagnez ${n} Bolducs <:1B:805427963972943882>`)
         client.channels.cache.get('804480347592589312').send(`${message.channel.tag} a gagné ${n} bolducs en tirant sur un ballon.`)
-        await tools.schedulerUpdate (db)
+        await tools.schedulerUpdate (db, client)
     },
     conf: {
         command: "shot ",

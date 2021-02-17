@@ -12,7 +12,7 @@ async function run (message, args) {
     if (!message.member.roles.cache.some(r => r.id === '802951934406557738')) return
 
     let nbr = args.join("")
-    if (nbr === "" || nbr === undefined || isNaN(nbr)) return message.channel.send("❌ Il faut indiquer le nombre de message à suprimer et écrire la commande ainsi `!clean x` (x étant le nombre de message à suprimer).")
+    if (nbr === "" || nbr === undefined || isNaN(nbr)) return message.channel.send("❌ Il faut indiquer le nombre de message à supprimer et écrire la commande ainsi `!clean x` (x étant le nombre de message à supprimer).")
     if (nbr < 1) return message.channel.send("❌ Le nombre de message à supprimer doit être supérieur à 0.")
 
     let nbSupp = 0,
@@ -35,7 +35,7 @@ async function run (message, args) {
         }
 
     try {
-        let mess = await chan.send("🗑️ Vous venez de suprimer " + nbSupp + " messages")
+        let mess = await chan.send("🗑️ Vous venez de supprimer " + nbSupp + " messages")
         await mess.delete({timeout: 5000})
         }
     catch (e) {}

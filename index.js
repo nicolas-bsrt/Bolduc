@@ -18,7 +18,7 @@ db.on('error', error => console.log("\x1b[0m", "\n     Problème lors de la conn
 db.once('open', async () => {
     console.log("\x1b[0m", "\n   " + tools.date(), "\n   > Connexion à la base réussie")
 
-    settings = await db.collection('settings').find({id: 'ID'})
+    settings = await db.collection('settings').findOne({id: 'ID'})
     let tomorrow = new Date(),
         respawn = new Date()
         tomorrow.setDate(tomorrow.getDate() + 1)

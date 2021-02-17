@@ -2,7 +2,7 @@ module.exports = {
     run: async (message, args, client, db, tools) => {
         let balloons = await db.collection('scheduler').find({name: 'balloonDisappear'})
             balloons = await balloons.toArray()
-        if (balloons.length === 0) return message.channel.send('Je ne vois aucun ballon à l\'horizon! Tu ferais mieux de regarder encore quelques minutes...')
+        if (balloons.length < 1) return message.channel.send('Je ne vois aucun ballon à l\'horizon! Tu ferais mieux de regarder encore quelques minutes...')
 
         let n = (Math.round(Math.random() * 48) + 2) * 10
         await db.collection('scheduler').deleteOne({name: 'balloonDisappear'})

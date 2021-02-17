@@ -21,7 +21,7 @@ db.once('open', async () => {
     settings = await db.collection('settings').find({id: 'ID'})
     let tomorrow = new Date()
         tomorrow.setMinutes(0)
-        tomorrow.setHours(0)
+        tomorrow.setHours(24)
     await db.collection('scheduler').updateOne({name:'daily'}, {$set: {date: tomorrow}}, {upsert: true})
     await loadFiles ()
     await client.login(config.token)

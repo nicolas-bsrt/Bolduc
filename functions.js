@@ -82,7 +82,7 @@ async function schedulerAction (client, db, event) {
 async function SchDaily (client, db) {
     let tomorrow = new Date()
         tomorrow.setMinutes(0)
-        tomorrow.setHours(0)
+        tomorrow.setHours(24)
     await db.collection('scheduler').updateOne({name:'daily'}, {$set: {date: tomorrow}}, {upsert: true})
 
 

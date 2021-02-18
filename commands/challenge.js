@@ -28,7 +28,7 @@ async function start (message, args, client, db) {
     if (!args[0] || isNaN(args[0])) return message.channel.send('Il faut me donner la somme de bolducs que vous souhaitez mettre en jeux pour ce challenge.')
     if (Number.isInteger(args[0]) || args[0] < 0) return message.channel.send('Le nombre de bolducs mis en jeux doit être un entier positif.')
 
-    let memberInfo = db.collection('members').findOne({id: message.member.id})
+    let memberInfo = await db.collection('members').findOne({id: message.member.id})
     if (!memberInfo || memberInfo.bolducs < args[0]) return message.channel.send("Vous n'avez pas assez de bolducs pour lancer ce défi.")
 
     await db.collection('members').updateOne({id: message.member.id}, {$inc: {bolducs: -args[0], dailyLoss: +args[0]}})
@@ -36,7 +36,7 @@ async function start (message, args, client, db) {
     message.channel.send(`Vous venez de lancer un challenge de ${args[0]} Bolduc${args[0] > 1 ? 's' : ''} <:1B:805427963972943882>`)
 }
 async function accept (message, args, client, db) {
-    // Accepte un défis lancé par un autre joueurs
+    // Accepte un défis lancé par un autre joueur
     let challenger = message.mentions.members.first()
 
     if (challenger) {
@@ -65,7 +65,7 @@ async function draw (message, db, challenge, client) {
     if (challenge.id === message.member.id) return message.channel.send('Vous ne pouvez pas vous défier vous-même.')
     let opponent = await message.guild.members.fetch(challenge.id)
     if (!opponent) message.channel.send("Le membre ayant lancé ce défi semble avoir quitté le serveur, le défi vient d'être supprimé.")
-    let memberInfo = db.collection('members').findOne({id: message.member.id})
+    let memberInfo = await db.collection('members').findOne({id: message.member.id})
     if (!memberInfo || memberInfo.bolducs < challenge.amount) return message.channel.send("Vous n'avez pas assez de bolducs pour accepter ce défi.")
 
 
@@ -88,6 +88,6 @@ async function draw (message, db, challenge, client) {
 
 
         await message.channel.send(`${winner} à remporté les Bolducs ! Soit ${challenge.amount*2} Bolducs <:1B:805427963972943882>`)
-        client.channels.cache.get('804480235919114320').send(`${winner.user.tag} a remporté ${amount} bolducs en gagnant le défit contre ${looser.user.tag}.`)
+        client.channels.cache.get('804480235919114320').send(`${winner.user.tag} a remporté ${challenge.amount*2} bolducs en gagnant le défit contre ${looser.user.tag}.`)
     }, 6000)
 }

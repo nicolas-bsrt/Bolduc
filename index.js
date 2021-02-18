@@ -74,14 +74,14 @@ client.on('guildMemberAdd', async (member) => {
     if (member.guild.id !== '802951636850180107') return
 
     let invitations = await client.guilds.cache.get('802951636850180107').fetchInvites()
-    for (let inv in invitations.array()) {
+    for (let inv of invitations.array()) {
         if (!invites[inv.code] || inv.uses !== invites[inv.code].uses) {
             invites[inv.code] = inv.uses
             await db.collection('members').updateOne(
                 {id: inv.inviter.id},
                 {$inc: {bolducs: 1000}},
                 {upsert: true})
-            let inviteMember = client.users.cache.get(inv.inviter.id),
+            let inviteMember = member.guild.members.cache.get(inv.inviter.id),
                 invitationNbr = 1
             if (invitations) {
                 invitationNbr = invitations

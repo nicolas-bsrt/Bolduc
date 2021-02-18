@@ -163,7 +163,7 @@ async function embedSwitch (reaction, user) {
 
     if (embed.title.startsWith("Classement"))
         if (reaction.emoji.name === "◀" || reaction.emoji.name === "▶")
-            await commands.top.reaction (reaction.message, embed, db, reaction, user)
+            await commands.topbolduc.reaction (reaction.message, embed, db, reaction, user)
 }
 async function msgToBolducs (message) {
     // on ajoute un bolduc à chaque message

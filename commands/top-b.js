@@ -3,7 +3,8 @@ module.exports = {
     run: fct,
     reaction: reaction,
     conf: {
-        command: "top",
+        command: "topbolduc",
+        aliases: ["top"],
         help: "Affiche le top 10 des membres ayant le plus de Bolducs."
     }
 }

@@ -81,7 +81,17 @@ client.on('guildMemberAdd', async (member) => {
                 {id: inv.inviter.id},
                 {$inc: {bolducs: 1000}},
                 {upsert: true})
-            client.channels.cache.get('804480347592589312').send(`${client.users.cache.get(inv.inviter.id)} a remporté 1000 bolducs pour avoir invité un nouveau membre.`)
+            let inviteMember = client.users.cache.get(inv.inviter.id),
+                invitationNbr = 1
+            if (invitations) {
+                invitationNbr = invitations
+                    .filter(i => inv.inviter.id === i.inviter.id)
+                    .map(i => {return i.uses})
+                    .reduce((a, b) => a + b, 0)
+            }
+            client.channels.cache.get('804480347592589312').send(
+                `${member.user.tag} a rejoins le serveur grâce à ${inviteMember}, il gagne 1000 bolducs!\n(${invitationNbr}${invitationNbr === 1 ? 'ère' : 'ème'} invitations)`
+            )
             break
         }
     }

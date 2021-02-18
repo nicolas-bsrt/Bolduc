@@ -43,7 +43,7 @@ async function add (reaction, user, db, tools) {
     if (!lottery) return
 
     if (lottery.entrants.includes(user.id)) return user.send("Vous êtes déjà inscrit à cette méga-loterie, inutile de s'y inscrire une deuxième fois.")
-    let memberInfo = db.collection('members').findOne({id: user.id})
+    let memberInfo = await db.collection('members').findOne({id: user.id})
     if (!memberInfo || memberInfo.bolducs < lottery.amount) return user.send("Vous n'avez pas assez de bolducs pour vous inscrire à cette à méga-loterie.")
 
     await db.collection('members').updateOne({id: user.id}, {$inc: {bolducs: -lottery.amount, dailyLoss: lottery.amount}})

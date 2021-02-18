@@ -36,7 +36,7 @@ async function start (message, args, client, db) {
     if (!args[1] || isNaN(args[1])) return message.channel.send('Il faut me donner la somme de bolducs que vous souhaitez mettre en jeux pour cette loterie.')
     if (Number.isInteger(args[1]) || args[1] < 0) return message.channel.send('Le nombre de bolducs mis en jeux doit être un entier positif.')
 
-    let memberInfo = db.collection('members').findOne({id: message.member.id})
+    let memberInfo = await db.collection('members').findOne({id: message.member.id})
     if (!memberInfo || memberInfo.bolducs < args[0]) return message.channel.send("Vous n'avez pas assez de bolducs pour lancer cette loterie.")
 
     await db.collection('members').updateOne({id: message.member.id}, {$inc: {bolducs: -args[1], dailyLoss: +args[1]}})
@@ -64,7 +64,7 @@ async function accept (message, args, client, db, tools) {
     }
 
     if (lottery.entrants.includes(message.member.id)) return message.channel.send("Vous êtes déjà inscrit à cette loterie, inutile de s'y inscrire une deuxième fois.")
-    let memberInfo = db.collection('members').findOne({id: message.member.id})
+    let memberInfo = await db.collection('members').findOne({id: message.member.id})
     if (!memberInfo || memberInfo.bolducs < lottery.amount) return message.channel.send("Vous n'avez pas assez de bolducs pour vous inscrire à cette à loterie.")
 
     await db.collection('members').updateOne({id: message.member.id}, {$inc: {bolducs: -lottery.amount, dailyLoss: lottery.amount}})

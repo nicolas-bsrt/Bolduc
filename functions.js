@@ -103,16 +103,40 @@ async function SchDaily (client, db) {
 }
 async function SchBalloonPop (client, db) {
     let respawn = new Date(),
-        pop = new Date()
+        pop = new Date(),
+        type,
+        appearMessage
         respawn.setMinutes(respawn.getMinutes() + 5 + Math.random()*55)
         pop.setMinutes(pop.getMinutes() + 10)
-    if (respawn.getHours() >= 22) respawn.setHours(respawn.getHours() + 8)
+
+    if (5 >= respawn.getHours() || respawn.getHours() > 21) {
+        respawn.setHours(respawn.getHours() + 1)
+        type = 'star'
+        appearMessage = '☄ Oh, une étoile filante !'
+    }
+    else {
+        let random = Math.random()
+        if (random < 0.1) {
+            type = 'foot'
+            appearMessage = 'Tiens un ballon de foot ? ⚽'
+        }
+        else {
+            type = 'balloon'
+            appearMessage = 'Oh, voilà un ballon ! :balloon:'
+        }
+    }
 
     await db.collection('scheduler').updateOne({id:'balloons', name:'balloonAdd'}, {$set: {date: respawn}}, {upsert: true})
-    await db.collection('scheduler').insertOne({id:'balloons', name:'balloonDisappear', date: pop})
-    await client.channels.cache.get('803048182077849621').send('Oh, voilà un ballon ! :balloon:')
+    await db.collection('scheduler').insertOne({id:'balloons', name:'balloonDisappear', date: pop, type: type})
+    await client.channels.cache.get('803048182077849621').send(appearMessage)
 }
 async function SchBalloonFly (client, db, event) {
     await db.collection('scheduler').deleteOne({id:'balloons', date: event.date})
-    await client.channels.cache.get('803048182077849621').send("Pouf, le ballon s'est envolé ! :dash:")
+    let disappearMessage
+
+    if (event.type === 'foot') disappearMessage = "💨 Plus rien, le ballon a dû quitter le terrain"
+    else if (event.type === 'balloon') disappearMessage = "Pouf, le ballon s'est envolé ! :dash:"
+    else if (event.type === 'star') disappearMessage = "🌌 L'étoile est partie, le ciel est calme à nouveau..."
+
+    await client.channels.cache.get('803048182077849621').send(disappearMessage)
 }

@@ -106,7 +106,7 @@ async function SchBalloonPop (client, db) {
         pop = new Date()
         respawn.setMinutes(respawn.getMinutes() + 5 + Math.random()*55)
         pop.setMinutes(pop.getMinutes() + 10)
-    if (respawn.getHours() >= 22) respawn.setHours(8)
+    if (respawn.getHours() >= 22) respawn.setHours(respawn.getHours() + 8)
 
     await db.collection('scheduler').updateOne({id:'balloons', name:'balloonAdd'}, {$set: {date: respawn}}, {upsert: true})
     await db.collection('scheduler').insertOne({id:'balloons', name:'balloonDisappear', date: pop})

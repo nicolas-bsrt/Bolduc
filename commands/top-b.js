@@ -66,7 +66,7 @@ function tabSplit (tab, page, guild, edit) {
         if (m.bolducs !== lastValue) temps += (c +1) + "."
         lastValue = m.bolducs
         temps += "         "
-        output.content.push(temps.substring(0, 4) + (m.member.displayName + "                                ").substring(0, 32) + m.bolducs)
+        output.content.push(temps.substring(0, 4) + (m.member.displayName + "                                ").substring(0, 27) + m.bolducs)
     }
     output.tot = Math.ceil(filtered.length/length)
     return output

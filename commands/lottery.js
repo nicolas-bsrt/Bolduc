@@ -19,7 +19,7 @@ module.exports = {
         }
     },
     conf: {
-        command: "loterie ",
+        command: "loterie",
         aliases: ["lot"],
         help: "Lance un challenge acceptable par plusieurs joueur qui débutera à la fin du temps défini (en minutes)(définir la somme mise en jeu)."
     }

@@ -63,11 +63,10 @@ async function rem (reaction, user, db) {
 async function draw (id, db, client) {
     delete megaLotteryStore[id]
     let lottery = await db.collection('lotteries').findOne({id: id, type: 'megaLottery'}),
-        isHere = false,
         winner,
         entrants = lottery.entrants.length
 
-    while (isHere) {
+    while (true) {
         //  Sélection au hasard du gagnant
         //  + on recommence s'il n'est pas sur le serveur
         //  + on annule s'il n'y a plus personne (sans redistribution)
@@ -76,17 +75,16 @@ async function draw (id, db, client) {
             return
         }
 
-        let result = Math.floor(Math.random() * lottery.entrants.length)
-        winner = lottery.entrants[result]
-        winner = await message.guild.members.fetch(winner.id)
+        let result = lottery.entrants[Math.floor(Math.random() * lottery.entrants.length)]
+        winner = await message.guild.members.fetch(result)
         if (!winner) lottery.entrants.slice(result, 1)
-        else isHere = true
+        else break
     }
 
 
     let amount = lottery.amount * entrants * 2
     await db.collection('lotteries').deleteOne({id: lottery.id, type: 'megaLottery'})
     await db.collection('members').updateOne({id: winner.id}, {$inc: {bolducs: amount, dailyBenefit: amount}})
-    await message.channel.send(`${winner} à remporté les Bolducs ! Soit ${amount} Bolducs <:1B:805427963972943882>`)
+    await client.channels.cache.get('804768383626903552').send(`${winner} à remporté les Bolducs ! Soit ${amount} Bolducs <:1B:805427963972943882>`)
     client.channels.cache.get('804480347592589312').send(`${winner.user.tag} a remporté ${amount} bolducs en gagnant la méga-lotterie.`)
 }

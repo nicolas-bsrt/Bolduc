@@ -114,7 +114,6 @@ async function deleteAndGiveBack (db, lottery) {
 async function draw (message, db, client) {
     delete lotteryStore[message.member.id]
     let lottery = await db.collection('lotteries').findOne({id: message.member.id, type: 'lottery'}),
-        isHere = false,
         winner,
         entrants = lottery.entrants.length
 
@@ -125,7 +124,7 @@ async function draw (message, db, client) {
     }
 
 
-    while (isHere) {
+    while (true) {
         //  Sélection au hasard du gagnant
         //  + on recommence s'il n'est pas sur le serveur
         //  + on annule s'il n'y a plus personne (sans redistribution)
@@ -134,11 +133,10 @@ async function draw (message, db, client) {
             return
         }
 
-        let result = Math.floor(Math.random() * lottery.entrants.length)
-            winner = lottery.entrants[result]
-            winner = await message.guild.members.fetch(winner.id)
+        let result = lottery.entrants[Math.floor(Math.random() * lottery.entrants.length)]
+            winner = await message.guild.members.fetch(result)
         if (!winner) lottery.entrants.slice(result, 1)
-        else isHere = true
+        else break
     }
 
 

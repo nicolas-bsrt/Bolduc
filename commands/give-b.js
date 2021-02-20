@@ -27,6 +27,6 @@ async function fct (message, args, client, db) {
     await db.collection('members').updateOne(
         {id: message.member.id},
         {$inc: {bolducs: -amount, dailyLoss: amount}})
-    await message.channel.send(`${member.displayName} viens de recevoir ${amount} Bolduc${amount > 1 ? 's' : ''} <:1B:805427963972943882> de la part de ${message.member}.`)
+    await message.channel.send(`${member.displayName} vient de recevoir ${amount} Bolduc${amount > 1 ? 's' : ''} <:1B:805427963972943882> de la part de ${message.member}.`)
     client.channels.cache.get('804480235919114320').send(`${member.user.tag} a reçut ${amount} bolducs de la part de ${message.author.tag}.`)
 }

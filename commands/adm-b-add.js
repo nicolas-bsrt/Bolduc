@@ -14,7 +14,7 @@ async function fct (message, args, client, db) {
     let member = message.mentions.members.first()
     if (!member) return message.channel.send('Il faut mentionner un membre pour lui donner des bolducs.')
 
-    let amount = +args[0]
+    let amount = +args[0], motif = args.slice(2).join(' ')
     if (!amount || isNaN(amount)) amount = +args[1]
     if (!amount || isNaN(amount)) return message.channel.send(`Erreur : il faut me donner le nombre de Bolducs à ajouter à ${member.displayName}.`)
     if (!Number.isInteger(amount)) return  message.channel.send("Erreur : tu dois m'indiquer un nombre entier de Bolducs à ajouter.")
@@ -43,5 +43,5 @@ async function fct (message, args, client, db) {
             .setColor('#ffc700')
             .setDescription(`${member.displayName} reçoit ${amount} Bolduc${amount > 1 ? 's' : ''} <:1B:805427963972943882>`)
     )
-    client.channels.cache.get('805419525486936074').send(`${message.author.tag} a ajouté ${amount} bolducs au compte de ${member.user.tag}.`)
+    client.channels.cache.get('805419525486936074').send(`${message.author.tag} a ajouté ${amount} bolducs au compte de ${member.user.tag}.` + (motif ? ('\n__Motif :__' + motif) : ''))
 }

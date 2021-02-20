@@ -1,9 +1,15 @@
+const Discord = require("discord.js")
 module.exports = {
     run: async (message, args, client, db) => {
         switch ((args[0] || '').toLowerCase()) {
             case "cancel":
             case "c":
                 await cancel (message, args, client, db)
+                break
+            case "liste":
+            case "list":
+            case "l":
+                await list (message, args, client, db)
                 break
             case "accept":
             case "a":
@@ -26,7 +32,7 @@ async function start (message, args, client, db) {
     let challenge = await db.collection('challenges').findOne({id: message.member.id})
     if (challenge) return message.channel.send("Vous ne pouvez pas lancer deux challenges en même temps, demandez à un membre d'accepter votre premier challenge ou annulez le avant d'en lancer un nouveau.")
     if (!args[0] || isNaN(args[0])) return message.channel.send('Il faut me donner la somme de bolducs que vous souhaitez mettre en jeux pour ce challenge.')
-    if (Number.isInteger(args[0]) || args[0] < 0) return message.channel.send('Le nombre de bolducs mis en jeux doit être un entier positif.')
+    if (Number.isInteger(args[0]) || args[0] <= 0) return message.channel.send('Le nombre de bolducs mis en jeux doit être un entier positif.')
 
     let memberInfo = await db.collection('members').findOne({id: message.member.id})
     if (!memberInfo || memberInfo.bolducs < args[0]) return message.channel.send("Vous n'avez pas assez de bolducs pour lancer ce défi.")
@@ -34,6 +40,25 @@ async function start (message, args, client, db) {
     await db.collection('members').updateOne({id: message.member.id}, {$inc: {bolducs: -args[0], dailyLoss: +args[0]}})
     await db.collection('challenges').insertOne({id: message.member.id, amount: +args[0]})
     message.channel.send(`Vous venez de lancer un challenge de ${args[0]} Bolduc${args[0] > 1 ? 's' : ''} <:1B:805427963972943882>`)
+}
+async function list (message, args, client, db) {
+    let challengers = [],
+        challenges = await db.collection('challenges').find()
+        challenges = await challenges.toArray()
+    if (challenges.length === 0) return message.channel.send("Aucun challenge n'est lancé pour le moment.")
+        challenges = challenges.sort((a, b) => {return b.amount - a.amount})
+
+    for (let c of challenges) {
+        let member = message.guild.members.cache.get(c.id)
+        challengers.push((member.displayName + "                                ").substring(0, 34) + c.amount)
+    }
+
+
+    await message.channel.send(new Discord.MessageEmbed()
+        .setColor("#f5a61f")
+        .setTitle("Voici la liste des challenges en cours :")
+        .setDescription("```" + challengers.join("\n") + "```")
+    )
 }
 async function accept (message, args, client, db) {
     // Accepte un défis lancé par un autre joueur

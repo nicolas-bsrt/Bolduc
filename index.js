@@ -89,7 +89,7 @@ client.on('guildMemberAdd', async (member) => {
                     .map(i => {return i.uses})
                     .reduce((a, b) => a + b, 0)
             }
-            client.channels.cache.get('804480347592589312').send(
+            client.channels.cache.get('805568621123207189').send(
                 `${member.user.tag} a rejoins le serveur grâce à ${inviteMember}, il gagne 1000 bolducs!\n(${invitationNbr}${invitationNbr === 1 ? 'ère' : 'ème'} invitations)`
             )
             break

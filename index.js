@@ -10,7 +10,7 @@ let commands = {}, aliases = {}, invites = {}, settings
 
 
 let db = mongoose.connection
-mongoose.connect(config.bdd, {
+mongoose.connect(process.env.DB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
@@ -29,7 +29,7 @@ db.once('open', async () => {
     await db.collection('scheduler').updateOne({id:'balloons', name:'balloonAdd'}, {$set: {date: respawn}}, {upsert: true})
 
     await loadFiles ()
-    await client.login(config.token)
+    await client.login(process.env.TOKEN)
     await tools.schedulerUpdate (db, client)
 })
 

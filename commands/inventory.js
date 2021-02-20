@@ -10,10 +10,9 @@ module.exports = {
 async function fct (message, args, client, db) {
     let target = message.member,
         phrase = 'Vous possédez actuellement'
-    if (message.mentions.members) {
+    if (message.mentions.members.first()) {
         target = message.mentions.members.first()
         phrase = target.displayName + ' possède'
-
     }
 
     let inventory = await db.collection('members').findOne({id: target.id})

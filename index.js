@@ -71,7 +71,9 @@ client.on('settingsUpdate', async () => {
 
 client.on('guildMemberAdd', async (member) => {
     if (member.guild.id !== '802951636850180107') return
+    member.guild.channels.cache.get('802951636850180110').send(`Bienvenue à ${member} dans La Communauté des Bolducs !`)
 
+    if (member.user.bot) return
     let invitations = await client.guilds.cache.get('802951636850180107').fetchInvites()
     for (let inv of invitations.array()) {
         if (!invites[inv.code] || inv.uses !== invites[inv.code]) {
@@ -88,8 +90,12 @@ client.on('guildMemberAdd', async (member) => {
                     .map(i => {return i.uses})
                     .reduce((a, b) => a + b, 0)
             }
+
             client.channels.cache.get('805568621123207189').send(
-                `${member.user.tag} a rejoins le serveur grâce à ${inviteMember}, il gagne 1000 bolducs!\n(${invitationNbr}${invitationNbr === 1 ? 'ère' : 'ème'} invitations)`
+                new Discord.MessageEmbed()
+                    .setColor('#00BEFF')
+                    .setTitle('Invitation')
+                    .setDescription(`**${member.user.tag}** a rejoint le serveur grâce à ${inviteMember}, il gagne 1000 bolducs!\n(${invitationNbr}${invitationNbr === 1 ? 'ère' : 'ème'} invitations)`)
             )
             break
         }
@@ -97,7 +103,6 @@ client.on('guildMemberAdd', async (member) => {
 
 
     await member.roles.add('803294699569545246')
-    member.guild.channels.cache.get('802951636850180110').send(`Bienvenue à ${member} dans La Communauté des Bolducs !`)
 })
 client.on("messageReactionAdd", (reaction, user) => {
     if (!user || user.bot || client.user.id !== reaction.message.author.id) return

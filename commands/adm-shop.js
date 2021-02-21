@@ -92,7 +92,7 @@ async function shop (reaction, user, db) {
             await db.collection('members').updateOne({id: user.id}, {$set: {items: list}})
             break
     }
-    reaction.message.guild.channels.cache.get('804480347592589312').send(`${user.tag} a acheté "${item.name}".`)
+    reaction.message.guild.channels.cache.get('804480347592589312').send(`> ${user.tag} a acheté "${item.name}".`)
     user.send(item.msg)
     await reaction.users.remove(user)
 }

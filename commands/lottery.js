@@ -144,5 +144,9 @@ async function draw (message, db, client) {
     await db.collection('lotteries').deleteOne({id: lottery.id, type: 'lottery'})
     await db.collection('members').updateOne({id: winner.id}, {$inc: {bolducs: amount, dailyBenefit: amount}})
     await message.channel.send(`${winner} à remporté les Bolducs ! Soit ${amount} Bolducs <:1B:805427963972943882>`)
-    client.channels.cache.get('804480235919114320').send(`${winner.user.tag} a remporté ${amount} bolducs en gagnant une lotterie.`)
+    client.channels.cache.get('804480235919114320').send(new Discord.MessageEmbed()
+        .setColor('#900000')
+        .setTitle('Loterie')
+        .setDescription(`**${winner.user.tag}** a remporté ${amount} bolducs en gagnant une loterie.`)
+    )
 }

@@ -97,9 +97,11 @@ async function SchDaily (client, db) {
     }
     await db.collection('members').updateMany({}, {$set: {dailyBenefit: 0, dailyLoss: 0}})
     await db.collection
-    client.channels.cache.get('804480347592589312').send(new Discord.MessageEmbed().setColor('#ffc700').setDescription(
-        `Gains : ${benefit}\nPertes : -${loss}\nBalance quotidienne : ${benefit - loss}`
-    ))
+    client.channels.cache.get('804480347592589312').send('@here', new Discord.MessageEmbed()
+        .setColor('#ffc700')
+        .setTitle('Récap quotidien')
+        .setDescription(`Gains : ${benefit}\nPertes : -${loss}\nBalance quotidienne : ${benefit - loss}`)
+    )
 }
 async function SchBalloonPop (client, db) {
     let respawn = new Date(),

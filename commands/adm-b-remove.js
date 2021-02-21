@@ -41,7 +41,12 @@ async function fct (message, args, client, db) {
     await message.channel.send(
         new Discord.MessageEmbed()
             .setColor('#ffc700')
-            .setDescription(`${member.displayName} perd ${amount} Bolduc${amount > 1 ? 's' : ''} <:1B:805427963972943882>`)
+            .setDescription(`${member.displayName} perd ${amount} Bolduc${amount > 1 ? 's' : ''} <:1B:805427963972943882>` + (motif ? ('\n__Motif :__*' + motif + '*') : ''))
     )
-    client.channels.cache.get('805419525486936074').send(`${message.author.tag} a retiré ${amount} bolducs au compte de ${member.user.tag}.` + (motif ? ('\n__Motif :__' + motif) : ''))
+    client.channels.cache.get('805419525486936074').send(
+        new Discord.MessageEmbed()
+            .setColor('#0BFF00')
+            .setTitle('Retrait  de bolducs')
+            .setDescription(`**${message.author.tag}** a retiré ${amount} bolducs au compte de ${member.user.tag}.` + (motif ? ('\n__Motif :__*' + motif + '*') : ''))
+    )
 }

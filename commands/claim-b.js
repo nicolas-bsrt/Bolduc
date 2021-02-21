@@ -29,7 +29,12 @@ async function fct (message, args, client, db, tools) {
         {id: message.member.id},
         {$inc: {bolducs: amount, dailyBenefit: amount}, $set: {lastClaim: memberInfo.lastClaim, claimCount: memberInfo.claimCount}},
         {upsert: true})
+    let count = memberInfo.claimCount + (memberInfo.claimCount > 1 ? 'ème jour consécutifs' : 'er jour')
 
-    await message.channel.send(`Voici vos ${amount} Bolducs <:1B:805427963972943882>`)
-    client.channels.cache.get('804480347592589312').send(`${message.author.tag} a gagné ${amount} bolducs avec la commande claim (${memberInfo.claimCount}${memberInfo.claimCount > 1 ? 'ème jour consécutifs' : 'er jour'}).`)
+    await message.channel.send(`Voici vos ${amount} Bolducs <:1B:805427963972943882>\n(${count})`)
+    client.channels.cache.get('804480347592589312').send(new Discord.MessageEmbed()
+        .setColor('#fefefe')
+        .setTitle('Claim')
+        .setDescription(`**${message.author.tag}** a gagné ${amount} bolducs avec la commande claim (${count}).`)
+    )
 }

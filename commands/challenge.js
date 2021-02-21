@@ -113,6 +113,10 @@ async function draw (message, db, challenge, client) {
 
 
         await message.channel.send(`${winner} à remporté les Bolducs ! Soit ${challenge.amount*2} Bolducs <:1B:805427963972943882>`)
-        client.channels.cache.get('804480235919114320').send(`${winner.user.tag} a remporté ${challenge.amount*2} bolducs en gagnant le défit contre ${looser.user.tag}.`)
+        client.channels.cache.get('804480235919114320').send(new Discord.MessageEmbed()
+            .setColor('#FF3B00')
+            .setTitle('Challenge')
+            .setDescription(`**${winner.user.tag}** a remporté ${challenge.amount*2} bolducs en gagnant le défi contre **${looser.user.tag}**.`)
+        )
     }, 6000)
 }

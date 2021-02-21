@@ -1,3 +1,4 @@
+const Discord = require("discord.js")
 module.exports = {
     run: async (message, args, client, db, tools, megaLottery) => {
         switch ((args[0] || '').toLowerCase()) {

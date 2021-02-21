@@ -106,17 +106,18 @@ async function SchDaily (client, db) {
 async function SchBalloonPop (client, db) {
     let respawn = new Date(),
         pop = new Date(),
+        duration = 10, // Time the object will last (in minutes)
         type,
         appearMessage
-        respawn.setMinutes(respawn.getMinutes() + 5 + Math.random()*55)
-        pop.setMinutes(pop.getMinutes() + 10)
 
     if (5 >= respawn.getHours() || respawn.getHours() > 21) {
         respawn.setHours(respawn.getHours() + 1)
         type = 'star'
+        duration = 30
         appearMessage = '☄ Oh, une étoile filante !'
     }
     else {
+        respawn.setMinutes(respawn.getMinutes() + 5 + Math.random()*55)
         let random = Math.random()
         if (random < 0.1) {
             type = 'foot'
@@ -128,6 +129,7 @@ async function SchBalloonPop (client, db) {
         }
     }
 
+    pop.setMinutes(pop.getMinutes() + duration)
     await db.collection('scheduler').updateOne({id:'balloons', name:'balloonAdd'}, {$set: {date: respawn}}, {upsert: true})
     await db.collection('scheduler').insertOne({id:'balloons', name:'balloonDisappear', date: pop, type: type})
     await client.channels.cache.get('803048182077849621').send(appearMessage)

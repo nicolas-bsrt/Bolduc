@@ -1,9 +1,11 @@
+const Discord = require("discord.js")
 module.exports = {
     run: fct,
     add: add,
     rem: rem,
     conf: {
-        command: "createmegaloterie",
+        command: "megaloterie",
+        aliases: ["createmegaloterie"],
         help: "Crée une loterie événementielle dans laquelle le gagnant remportera la somme misées par les marticipants multipliée par 2."
     }
 }
@@ -11,6 +13,11 @@ let megaLotteryStore = {}
 
 
 async function fct (message, args, client, db) {
+    if (args[0] && (args[0].toLowerCase() === "cancel" || args[0].toLowerCase() === "c")) {
+        await cancel (message, args, client, db)
+        return
+    }
+
     if (!message.member.roles.cache.some(r => r.id === '804483073437204491')) return
     let lottery = await db.collection('lotteries').findOne({id: message.member.id, type: 'megaLottery'})
     if (lottery) return message.channel.send("Vous ne pouvez pas lancer deux méga-loteries en même temps, attendez sa fin ou annulez la avant d'en lancer une nouvelle.")
@@ -53,6 +60,15 @@ async function add (reaction, user, db, tools) {
     await db.collection('members').updateOne({id: user.id}, {$inc: {bolducs: -lottery.amount, dailyLoss: lottery.amount}})
     await db.collection('lotteries').updateOne({message: reaction.message.id, type: 'megaLottery'}, {$push: {entrants: user.id}})
     await user.send(`Vous venez de vous inscrire dans une méga-loterie, tirage dans ${tools.howManyLast(new Date().getTime(), lottery.start)}.`)
+}
+async function cancel (message, args, client, db) {
+    // annule une méga-lotterie qu'on a lancé
+    let lottery = await db.collection('lotteries').findOne({id: message.member.id, type: 'megaLottery'})
+    if (!lottery) return message.channel.send("Vous n'avez lancé aucune lotterie, vous ne pouvez rien annuler.")
+
+    await db.collection('members').updateMany({id: {$in: lottery.entrants}}, {$inc: {bolducs: lottery.amount, dailyLoss: -lottery.amount}})
+    await db.collection('lotteries').deleteOne({id: lottery.id, type: 'megaLottery'})
+    message.channel.send('La méga-lotterie est annulé, les paris ont été reversés aux participants.')
 }
 async function rem (reaction, user, db) {
     let lottery = await db.collection('lotteries').findOne({message: reaction.message.id, type: 'megaLottery'})

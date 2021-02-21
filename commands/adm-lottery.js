@@ -48,7 +48,7 @@ async function add (reaction, user, db, tools) {
 
     await db.collection('members').updateOne({id: user.id}, {$inc: {bolducs: -lottery.amount, dailyLoss: lottery.amount}})
     await db.collection('lotteries').updateOne({message: reaction.message.id, type: 'megaLottery'}, {$push: {entrants: user.id}})
-    await user.send(`Vous venez de vous inscrire dans une méga-loterie, tirrage dans ${tools.howManyLast(new Date().getTime(), lottery.start)}.`)
+    await user.send(`Vous venez de vous inscrire dans une méga-loterie, tirage dans ${tools.howManyLast(new Date().getTime(), lottery.start)}.`)
 }
 async function rem (reaction, user, db) {
     let lottery = await db.collection('lotteries').findOne({message: reaction.message.id, type: 'megaLottery'})

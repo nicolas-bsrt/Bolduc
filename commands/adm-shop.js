@@ -10,31 +10,31 @@ module.exports = {
 let objects = {
     VIP: {
         name: "VIP",
-        price: 10000,
+        price: 100000,
         emoji: "👑",
         msg: "Vous voilà VIP !"
     },
     M_VIP: {
         name: "Mega VIP",
-        price: 50000,
+        price: 500000,
         emoji: "💎",
         msg: "Vous voilà Méga-VIP !"
     },
     PUB: {
         name: "Pub",
-        price: 2000,
+        price: 5000,
         emoji: "🪧",
         msg: "Vous pouvez dès à présent poster une pub dans le salon <#805566128742072330> en utilisant la commande `B!pub` suivie de votre message publicitaire."
     },
     PUB_H: {
         name: "Pub here",
-        price: 20000,
+        price: 50000,
         emoji: "📣",
         msg: "Vous pouvez dès à présent poster une pub dans le salon <#805566128742072330> en utilisant la commande `B!pub here` suivie de votre message publicitaire. Le bot mentionnera automatiquement @here."
     },
     PUB_E: {
         name: "Pub everyone",
-        price: 30000,
+        price: 200000,
         emoji: "📡",
         msg: "Vous pouvez dès à présent poster une pub dans le salon <#805566128742072330> en utilisant la commande `B!pub everyone` suivie de votre message publicitaire. Le bot mentionnera automatiquement @everyone."
     }

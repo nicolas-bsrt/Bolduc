@@ -2,7 +2,6 @@ const Discord = require("discord.js")
     , mongoose = require('mongoose')
     , fs = require("fs")
     , client = new Discord.Client()
-    , config = require('./config.json')
     , tools = require('./functions')
 let commands = {}, aliases = {}, invites = {}, settings
 
@@ -118,10 +117,10 @@ client.on("messageReactionRemove", (reaction, user) => {
 })
 client.on("message", async message => {
     if (message.author.bot || message.channel.type !== "text") return
-    if (!message.content.startsWith(config.prefix)) return msgToBolducs (message)
+    if (!message.content.startsWith(process.env.PREFIX)) return msgToBolducs (message)
 
 
-    let command = message.content.replace(/\n/gi, " ").split(/ +/gi)[0].toString().toLowerCase().slice(config.prefix.length),
+    let command = message.content.replace(/\n/gi, " ").split(/ +/gi)[0].toString().toLowerCase().slice(process.env.PREFIX.length),
         args =  message.content.replace(/\n/gi, "\n ").split(/ +/gi).slice(1)
 
 

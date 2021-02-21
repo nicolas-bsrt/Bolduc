@@ -109,14 +109,14 @@ client.on("messageReactionAdd", (reaction, user) => {
     if (settings.shop.includes(reaction.message.id) && ['👑','💎','🪧','📣','📡'].includes(reaction.emoji.name))
         return commands.shop.shop (reaction, user, db, settings)
     if (reaction.message.channel.id === '804768383626903552' && reaction.emoji.name === "🎉")
-        return commands.createmegaloterie.add (reaction, user, db, tools)
+        return commands.megaloterie.add (reaction, user, db, tools)
     if (reaction.message.embeds)
         return embedSwitch (reaction, user)
 })
 client.on("messageReactionRemove", (reaction, user) => {
     if (!user || user.bot || client.user.id !== reaction.message.author.id) return
     if (reaction.message.channel.id === '804768383626903552' && reaction.emoji.name === "🎉")
-        return commands.createmegaloterie.rem (reaction, user, db)
+        return commands.megaloterie.rem (reaction, user, db)
     if (reaction.message.embeds)
         return embedSwitch (reaction, user)
 })

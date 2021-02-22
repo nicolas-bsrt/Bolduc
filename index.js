@@ -72,9 +72,13 @@ client.on('settingsUpdate', async () => {
 client.on('guildMemberAdd', async (member) => {
     if (member.guild.id !== '802951636850180107') return
     member.guild.channels.cache.get('802951636850180110').send(`Bienvenue à ${member} dans La Communauté des Bolducs !`)
+    await member.roles.add('803294699569545246')
 
     if (member.user.bot) return
-    let invitations = await client.guilds.cache.get('802951636850180107').fetchInvites()
+    let invitations = await client.guilds.cache.get('802951636850180107').fetchInvites(),
+        mbrData = await db.collection('members').findOne({id: member.id}),
+        inviter
+    if (mbrData) return
     for (let inv of invitations.array()) {
         if ((!invites[inv.code] && invites[inv.code] !== 0) || inv.uses !== invites[inv.code]) {
             invites[inv.code] = inv.uses
@@ -82,6 +86,7 @@ client.on('guildMemberAdd', async (member) => {
                 {id: inv.inviter.id},
                 {$inc: {bolducs: 1000}},
                 {upsert: true})
+            inviter = inv.inviter
             let inviteMember = member.guild.members.cache.get(inv.inviter.id),
                 invitationNbr = 1
             if (invitations) {
@@ -100,9 +105,7 @@ client.on('guildMemberAdd', async (member) => {
             break
         }
     }
-
-
-    await member.roles.add('803294699569545246')
+    await db.collection('members').insertOne({id: member.id, inviter: inviter})
 })
 client.on("messageReactionAdd", (reaction, user) => {
     if (!user || user.bot || client.user.id !== reaction.message.author.id) return

@@ -73,12 +73,11 @@ client.on('guildMemberAdd', async (member) => {
     if (member.guild.id !== '802951636850180107') return
     member.guild.channels.cache.get('802951636850180110').send(`Bienvenue à ${member} dans La Communauté des Bolducs !`)
     await member.roles.add('803294699569545246')
-
     if (member.user.bot) return
     let invitations = await client.guilds.cache.get('802951636850180107').fetchInvites(),
         mbrData = await db.collection('members').findOne({id: member.id}),
         inviter
-    if (mbrData) return
+    if (mbrData && mbrData.inviter) return
     for (let inv of invitations.array()) {
         if ((!invites[inv.code] && invites[inv.code] !== 0) || inv.uses !== invites[inv.code]) {
             invites[inv.code] = inv.uses
@@ -174,6 +173,7 @@ async function embedSwitch (reaction, user) {
 }
 async function msgToBolducs (message) {
     // on ajoute un bolduc à chaque message
+    if (message.content.length < 1) return
     await db.collection('members').updateOne(
         {id: message.member.id},
         {$inc: {bolducs: 1, dailyBenefit: 1}},

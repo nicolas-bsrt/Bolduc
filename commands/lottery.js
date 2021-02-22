@@ -115,8 +115,9 @@ async function deleteAndGiveBack (db, lottery) {
 async function draw (message, db, client) {
     delete lotteryStore[message.member.id]
     let lottery = await db.collection('lotteries').findOne({id: message.member.id, type: 'lottery'}),
-        winner,
-        entrants = lottery.entrants.length
+        winner
+    if (!lottery) return message.channel.send('Erreur. Il semblerait que la lotterie ait été supprimée.')
+    let entrants = lottery.entrants.length
 
     let opponent = await message.guild.members.fetch(lottery.id)
     if (!opponent) {

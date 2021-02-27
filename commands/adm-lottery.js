@@ -1,4 +1,3 @@
-const Discord = require("discord.js")
 module.exports = {
     run: fct,
     add: add,
@@ -9,10 +8,9 @@ module.exports = {
         help: "Crée une loterie événementielle dans laquelle le gagnant remportera la somme misées par les marticipants multipliée par 2."
     }
 }
-let megaLotteryStore = {}
 
 
-async function fct (message, args, client, db) {
+async function fct (message, args, client, db, tools) {
     if (args[0] && (args[0].toLowerCase() === "cancel" || args[0].toLowerCase() === "c")) {
         await cancel (message, args, client, db)
         return
@@ -40,10 +38,12 @@ async function fct (message, args, client, db) {
 
 
     if (message.channel.id !== '804768383626903552') message.channel.send('Je lance la Mégaloterie dans <#804768383626903552>.')
+    let time = new Date(); time.setTime(time.getTime() + args[0]*60000)
     let announce = await client.channels.cache.get('804768383626903552').send(`@everyone Mégaloterie X2 !!! Appuyez sur 🎉 pour participer! (Prix ${args[1]} Bolducs <:1B:805427963972943882>)\nLe total des Bolducs mit en jeu sera multiplié par deux et le vainqueur emportera le total !\n\nVous avez ${args[0]} minute${args[0] > 1 ? "s" : ""} pour participer.`)
-    await db.collection('lotteries').insertOne({id: message.member.id, type: 'megaLottery', amount: +args[1], entrants: [], message: announce.id, start: (new Date().getTime() + args[0]*60000)})
+    await db.collection('lotteries').insertOne({id: message.member.id, type: 'megaLottery', amount: +args[1], entrants: [], message: announce.id, start: time})
     await announce.react('🎉')
-    megaLotteryStore[message.member.id] = setTimeout(draw, 60000*(+args[0]), message, db, client)
+    await db.collection('scheduler').insertOne({id: message.author.id, name: 'MegaLotteryDraw', date: time})
+    await tools.schedulerUpdate (db, client)
 }
 async function add (reaction, user, db, tools) {
     let lottery = await db.collection('lotteries').findOne({message: reaction.message.id, type: 'megaLottery'})
@@ -68,6 +68,7 @@ async function cancel (message, args, client, db) {
 
     await db.collection('members').updateMany({id: {$in: lottery.entrants}}, {$inc: {bolducs: lottery.amount, dailyLoss: -lottery.amount}})
     await db.collection('lotteries').deleteOne({id: lottery.id, type: 'megaLottery'})
+    await db.collection('scheduler').deleteOne({id: message.author.id, name: 'MegaLotteryDraw'})
     message.channel.send('La méga-loterie est annulé, les paris ont été reversés aux participants.')
 }
 async function rem (reaction, user, db) {
@@ -78,33 +79,4 @@ async function rem (reaction, user, db) {
     await db.collection('lotteries').updateOne({message: reaction.message.id, type: 'megaLottery'}, {$pull: {entrants: user.id}})
     await db.collection('members').updateOne({id: user.id}, {$inc: {bolducs: lottery.amount, dailyLoss: -lottery.amount}})
     await user.send(`J'annule votre participation à la méga-loterie.`)
-}
-
-async function draw (message, db, client) {
-    delete megaLotteryStore[message.member.id]
-    let lottery = await db.collection('lotteries').findOne({id: message.member.id, type: 'megaLottery'}),
-        winner,
-        entrants = lottery.entrants.length
-
-    while (true) {
-        //  Sélection au hasard du gagnant
-        //  + on recommence s'il n'est pas sur le serveur
-        //  + on annule s'il n'y a plus personne (sans redistribution)
-        if (lottery.entrants.length === 0) {
-            await db.collection('lotteries').deleteOne({id: lottery.id, type: 'megaLottery'})
-            return
-        }
-
-        let result = lottery.entrants[Math.floor(Math.random() * lottery.entrants.length)]
-        winner = await message.guild.members.fetch(result)
-        if (!winner) lottery.entrants.slice(result, 1)
-        else break
-    }
-
-
-    let amount = lottery.amount * entrants * 2
-    await db.collection('lotteries').deleteOne({id: lottery.id, type: 'megaLottery'})
-    await db.collection('members').updateOne({id: winner.id}, {$inc: {bolducs: amount, dailyBenefit: amount}})
-    await client.channels.cache.get('804768383626903552').send(`${winner} à remporté les Bolducs ! Soit ${amount} Bolducs <:1B:805427963972943882>`)
-    client.channels.cache.get('804480347592589312').send(`${winner.user.tag} a remporté ${amount} bolducs en gagnant la méga-loterie.`)
 }

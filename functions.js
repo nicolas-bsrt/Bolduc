@@ -74,6 +74,9 @@ async function schedulerAction (client, db, event) {
         case "balloonDisappear":
             await SchBalloonFly (client, db, event)
             break
+        case "MegaLotteryDraw":
+            await MegaLotteryDraw (client, db, event)
+            break
     }
 }
 
@@ -143,4 +146,36 @@ async function SchBalloonFly (client, db, event) {
     else if (event.type === 'star') disappearMessage = "🌌 L'étoile est partie, le ciel est calme à nouveau..."
 
     await client.channels.cache.get('803048182077849621').send(disappearMessage)
+}
+async function MegaLotteryDraw (client, db, event) {
+    let lottery = await db.collection('lotteries').findOne({id: event.id, type: 'megaLottery'})
+    await db.collection('scheduler').deleteOne({id: event.id, name: 'MegaLotteryDraw'})
+    if (!lottery) return
+    let winner, entrants = lottery.entrants.length
+
+    while (true) {
+        //  Sélection au hasard du gagnant
+        //  + on recommence s'il n'est pas sur le serveur
+        //  + on annule s'il n'y a plus personne (sans redistribution)
+        if (lottery.entrants.length === 0) {
+            await db.collection('lotteries').deleteOne({id: lottery.id, type: 'megaLottery'})
+            return
+        }
+
+        let result = lottery.entrants[Math.floor(Math.random() * lottery.entrants.length)]
+        winner = await client.guilds.cache.get('802951636850180107').members.fetch(result)
+        if (!winner) lottery.entrants.slice(result, 1)
+        else break
+    }
+
+
+    let amount = lottery.amount * entrants * 2
+    await db.collection('lotteries').deleteOne({id: lottery.id, type: 'megaLottery'})
+    await db.collection('members').updateOne({id: winner.id}, {$inc: {bolducs: amount, dailyBenefit: amount}})
+    await client.channels.cache.get('805019846214549525').send(`${winner} à remporté les Bolducs ! Soit ${amount} Bolducs <:1B:805427963972943882>`)
+    client.channels.cache.get('804480347592589312').send(new Discord.MessageEmbed()
+        .setColor('#003BFF')
+        .setTitle('Vainqueur méga-loterie 🎉')
+        .setDescription(`${winner.user.tag} a remporté ${amount} bolducs en gagnant la méga-loterie.`)
+    )
 }

@@ -34,7 +34,7 @@ async function fct (message, args, client, db) {
 
     await db.collection('members').updateOne(
         {id: member.id},
-        {$inc: {bolducs: -amount, dailyLoss: amount}},
+        {$inc: {bolducs: -amount}},
         {upsert: true})
 
 

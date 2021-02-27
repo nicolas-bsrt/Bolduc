@@ -9,7 +9,12 @@ module.exports = {
 
 async function fct (message, args, client, db) {
     let member = message.mentions.members.first()
-    if (!member) return message.channel.send('Il faut mentionner un membre pour lui donner des bolducs.')
+    if (!member) {
+        if (!['random', 'r'].includes(args[1].toLowerCase())) return message.channel.send('Il faut mentionner un membre pour lui donner des bolducs.')
+        let targets = message.guild.members.cache.array().filter(m => m.user.presence.status === 'online' && !m.user.bot)
+        if (targets.length === 0) return message.channel.send("Aucun membre n'est en ligne, recommence un peu plus tard pour faire un don au hasard.")
+        member = targets[Math.floor(Math.random() * targets.length)]
+    }
 
     let amount = +args[0]
     if (!amount || isNaN(amount)) amount = +args[1]

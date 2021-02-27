@@ -10,6 +10,7 @@ module.exports = {
 
 
 async function fct (message, args, client, db) {
+    await message.delete()
     let inventory = await db.collection('members').findOne({id: message.member.id}),
         mention = `__Pub de ${message.author.tag}__ `,
         pub,

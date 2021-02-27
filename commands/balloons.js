@@ -3,7 +3,7 @@ module.exports = {
     run: shot,
     conf: {
         command: "shot",
-        aliases: ["pan, dream"],
+        aliases: ["pan", "dream"],
         channel: ['803048182077849621'],
         help: "Tire sur un ballon donnant de 20 à 500 bolducs (dans le salon #le-tire-au-bolducs)."
     }

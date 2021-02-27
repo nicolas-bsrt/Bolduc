@@ -79,6 +79,7 @@ client.on('guildMemberAdd', async (member) => {
         inviter
     if (mbrData && mbrData.inviter) return
     for (let inv of invitations.array()) {
+        if (inv.uses === 0) continue
         if ((!invites[inv.code] && invites[inv.code] !== 0) || inv.uses !== invites[inv.code]) {
             invites[inv.code] = inv.uses
             await db.collection('members').updateOne(

@@ -133,7 +133,8 @@ client.on("message", async message => {
 
 
     command = aliases[command] || command
-    if (commands[command]) commands[command].run (message, args, client, db, tools)
+    if (commands[command] && (!commands[command].conf.channel || commands[command].conf.channel.includes(message.channel.id)))
+        commands[command].run (message, args, client, db, tools)
 })
 
 

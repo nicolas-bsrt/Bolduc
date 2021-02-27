@@ -26,6 +26,7 @@ async function reaction (message, embed, db, reaction, user) {
 async function getRanking (db) {
     let list = await db.collection('members').find()
         list = await list.toArray()
+        list = list.filter(m => !isNaN(m.bolducs))
         list.sort((a, b) => b.bolducs - a.bolducs)
     return list
 }

@@ -10,6 +10,11 @@ module.exports = {
             case "a":
                 await accept (message, args, client, db, tools)
                 break
+            case "liste":
+            case "list":
+            case "l":
+                await list (message, args, client, db)
+                break
             case "remove":
             case "r":
                 await remove (message, args, client, db)
@@ -45,6 +50,25 @@ async function start (message, args, client, db) {
 
     message.channel.send(`Vous venez de lancer une loterie de ${args[1]} Bolduc${args[1] > 1 ? 's' : ''} <:1B:805427963972943882>`)
     lotteryStore[message.member.id] = setTimeout(draw, 60000*(+args[0]), message, db, client)
+}
+async function list (message, args, client, db) {
+    let challengers = [],
+        challenges = await db.collection('lotteries').find()
+        challenges = await challenges.toArray()
+        challenges = challenges.filter(c => c.type !== 'megaLottery')
+    if (challenges.length === 0) return message.channel.send("Aucune loterie n'est lancée pour le moment.")
+        challenges = challenges.sort((a, b) => {return b.amount - a.amount})
+
+    for (let c of challenges) {
+        let member = message.guild.members.cache.get(c.id)
+        challengers.push((member.displayName + "                                ").substring(0, 34) + c.amount)
+    }
+
+    await message.channel.send(new Discord.MessageEmbed()
+        .setColor("#f5a61f")
+        .setTitle("Voici la liste des loteries en cours :")
+        .setDescription("```" + challengers.join("\n") + "```")
+    )
 }
 async function accept (message, args, client, db, tools) {
     // accepte la lotterie lancé par un autre joueur

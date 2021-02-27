@@ -117,7 +117,7 @@ async function SchBalloonPop (client, db) {
         appearMessage = '☄ Oh, une étoile filante !'
     }
     else {
-        respawn.setMinutes(respawn.getMinutes() + 5 + Math.random()*55)
+        respawn.setMinutes(respawn.getMinutes() + 5 + Math.random()*30)
         let random = Math.random()
         if (random < 0.1) {
             type = 'foot'

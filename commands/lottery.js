@@ -154,8 +154,9 @@ async function draw (message, db, client) {
         //  Sélection au hasard du gagnant
         //  + on recommence s'il n'est pas sur le serveur
         //  + on annule s'il n'y a plus personne (sans redistribution)
-        if (lottery.entrants.length === 0) {
-            await db.collection('lotteries').deleteOne({id: lottery.id, type: 'lottery'})
+        if (lottery.entrants.length === 1) {
+            message.channel.send("La loterie ne contient pas assez de membre, le défi vient d'être supprimé.")
+            await deleteAndGiveBack (db, lottery)
             return
         }
 

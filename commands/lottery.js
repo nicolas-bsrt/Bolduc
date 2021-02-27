@@ -43,7 +43,7 @@ async function start (message, args, client, db) {
     if (Number.isInteger(args[1]) || args[1] < 0) return message.channel.send('Le nombre de bolducs mis en jeux doit être un entier positif.')
 
     let memberInfo = await db.collection('members').findOne({id: message.member.id})
-    if (!memberInfo || memberInfo.bolducs < args[0]) return message.channel.send("Vous n'avez pas assez de bolducs pour lancer cette loterie.")
+    if (!memberInfo || memberInfo.bolducs < args[1]) return message.channel.send("Vous n'avez pas assez de bolducs pour lancer cette loterie.")
 
     await db.collection('members').updateOne({id: message.member.id}, {$inc: {bolducs: -args[1], dailyLoss: +args[1]}})
     await db.collection('lotteries').insertOne({id: message.member.id, type: 'lottery', amount: +args[1], entrants: [message.member.id], start: (new Date().getTime() + args[0]*60000)})

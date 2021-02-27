@@ -38,7 +38,7 @@ async function start (message, args, client, db) {
     if (challenge) return message.channel.send("Vous ne pouvez pas lancer deux loteries en même temps, attendez sa fin ou annulez la avant d'en lancer une nouvelle.")
 
     if (!args[0] || isNaN(args[0]) || 0 > args[0]) return message.channel.send('Il faut me donner la durée de la loterie (en minutes).')
-    if (args[0] > 1440) return message.channel.send('La lotterie ne peut pas durer plus de 24h.')
+    if (args[0] > 1440) return message.channel.send('La loterie ne peut pas durer plus de 24h.')
     if (!args[1] || isNaN(args[1])) return message.channel.send('Il faut me donner la somme de bolducs que vous souhaitez mettre en jeux pour cette loterie.')
     if (Number.isInteger(args[1]) || args[1] < 0) return message.channel.send('Le nombre de bolducs mis en jeux doit être un entier positif.')
 
@@ -71,7 +71,7 @@ async function list (message, args, client, db) {
     )
 }
 async function accept (message, args, client, db, tools) {
-    // accepte la lotterie lancé par un autre joueur
+    // accepte la loterie lancé par un autre joueur
     let challenger = message.mentions.members.first(),
         lottery
 
@@ -106,14 +106,14 @@ async function remove (message, args, client, db) {
 
     if (challenger) {
         lottery = await db.collection('lotteries').findOne({id: challenger.id, type: 'lottery'})
-        if (!lottery) return message.channel.send("Le membre que vous avez mentionné n'a pas lancé de lotterie.")
-        if (!lottery.entrants.includes(message.member.id)) return message.channel.send("Vous n'êtes pas inscrit à la lotterie lancée par le membre mentionné.")
+        if (!lottery) return message.channel.send("Le membre que vous avez mentionné n'a pas lancé de loterie.")
+        if (!lottery.entrants.includes(message.member.id)) return message.channel.send("Vous n'êtes pas inscrit à la loterie lancée par le membre mentionné.")
         lID = lottery.id
     }
     else {
         lottery = await db.collection('lotteries').find({entrants: message.member.id, type: 'lottery'})
         lottery = await lottery.toArray()
-        if (lottery.length > 1) return message.channel.send("Vous êtes inscrit à plus d'une lotterie, il faut me mentionner le membre qui a lancé la lotterie pour vous en désinscrire.")
+        if (lottery.length > 1) return message.channel.send("Vous êtes inscrit à plus d'une loterie, il faut me mentionner le membre qui a lancé la loterie pour vous en désinscrire.")
         lID = lottery[0].id
     }
 
@@ -123,12 +123,12 @@ async function remove (message, args, client, db) {
     await db.collection('members').updateOne({id: message.member.id}, {$inc: {bolducs: lottery.amount, dailyLoss: -lottery.amount}})
 }
 async function cancel (message, args, client, db) {
-    // annule une lotterie qu'on a lancé
+    // annule une loterie qu'on a lancé
     let lottery = await db.collection('lotteries').findOne({id: message.member.id, type: 'lottery'})
-    if (!lottery) return message.channel.send("Vous n'avez lancé aucune lotterie, vous ne pouvez rien annuler.")
+    if (!lottery) return message.channel.send("Vous n'avez lancé aucune loterie, vous ne pouvez rien annuler.")
 
     await deleteAndGiveBack (db, lottery)
-    message.channel.send('La lotterie est annulé, les paris ont été reversés aux participants.')
+    message.channel.send('La loterie est annulé, les paris ont été reversés aux participants.')
 }
 async function deleteAndGiveBack (db, lottery) {
     await db.collection('lotteries').deleteOne({id: lottery.id, type: 'lottery'})
@@ -140,7 +140,7 @@ async function draw (message, db, client) {
     delete lotteryStore[message.member.id]
     let lottery = await db.collection('lotteries').findOne({id: message.member.id, type: 'lottery'}),
         winner
-    if (!lottery) return message.channel.send('Erreur. Il semblerait que la lotterie ait été supprimée.')
+    if (!lottery) return message.channel.send('Erreur. Il semblerait que la loterie ait été supprimée.')
     let entrants = lottery.entrants.length
 
     let opponent = await message.guild.members.fetch(lottery.id)

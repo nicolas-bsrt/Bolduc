@@ -32,7 +32,7 @@ async function shot (message, args, client, db, tools) {
         logMessage.setDescription(`🎈 ${message.author.tag} a gagné ${n} bolducs en tirant sur un ballon.`)
     }
     else if (balloons[0].type === 'star') {
-        n = (Math.round(Math.random() * 5) + 5) * 100
+        n = (Math.round(Math.random() * 50) + 50) * 10
         shotMessage = `☄ Votre voeux est exaucé! Vous gagnez ${n} Bolducs <:1B:805427963972943882>.`
         logMessage.setDescription(`📸 ${message.author.tag} a gagné ${n} bolducs en voyant une étoile filante.`)
     }

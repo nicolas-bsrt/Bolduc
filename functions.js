@@ -77,6 +77,9 @@ async function schedulerAction (client, db, event) {
         case "MegaLotteryDraw":
             await MegaLotteryDraw (client, db, event)
             break
+        case "LotteryDraw":
+            await LotteryDraw (client, db, event)
+            break
     }
 }
 
@@ -177,5 +180,37 @@ async function MegaLotteryDraw (client, db, event) {
         .setColor('#003BFF')
         .setTitle('Vainqueur méga-loterie 🎉')
         .setDescription(`${winner.user.tag} a remporté ${amount} bolducs en gagnant la méga-loterie.`)
+    )
+}
+async function LotteryDraw (client, db, event) {
+    let lottery = await db.collection('lotteries').findOne({id: event.id, type: 'lottery'})
+    await db.collection('scheduler').deleteOne({id: event.id, name: 'LotteryDraw'})
+    if (!lottery) return
+    let winner, entrants = lottery.entrants.length
+
+    while (true) {
+        //  Sélection au hasard du gagnant
+        //  + on recommence s'il n'est pas sur le serveur
+        //  + on annule s'il n'y a plus personne (sans redistribution)
+        if (lottery.entrants.length === 0) {
+            await db.collection('lotteries').deleteOne({id: lottery.id, type: 'lottery'})
+            return
+        }
+
+        let result = lottery.entrants[Math.floor(Math.random() * lottery.entrants.length)]
+            winner = await client.guilds.cache.get('802951636850180107').members.fetch(result)
+        if (!winner) lottery.entrants.slice(result, 1)
+        else break
+    }
+
+
+    let amount = lottery.amount * entrants
+    await db.collection('lotteries').deleteOne({id: lottery.id, type: 'lottery'})
+    await db.collection('members').updateOne({id: winner.id}, {$inc: {bolducs: amount, dailyBenefit: amount}})
+    await client.channels.cache.get(event.channel).send(`${winner} à remporté les Bolducs ! Soit ${amount} Bolducs <:1B:805427963972943882>`)
+    client.channels.cache.get('804480347592589312').send(new Discord.MessageEmbed()
+        .setColor('#900000')
+        .setTitle('Loterie')
+        .setDescription(`**${winner.user.tag}** a remporté ${amount} bolducs en gagnant une loterie.`)
     )
 }

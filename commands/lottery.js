@@ -1,6 +1,6 @@
 const Discord = require("discord.js")
 module.exports = {
-    run: async (message, args, client, db, tools, megaLottery) => {
+    run: async (message, args, client, db, tools) => {
         switch ((args[0] || '').toLowerCase()) {
             case "cancel":
             case "c":
@@ -20,7 +20,7 @@ module.exports = {
                 await remove (message, args, client, db)
                 break
             default:
-                await start (message, args, client, db, (megaLottery?2:1))
+                await start (message, args, client, db, tools)
                 break
         }
     },
@@ -30,10 +30,9 @@ module.exports = {
         help: "Lance un challenge acceptable par plusieurs joueur qui débutera à la fin du temps défini (en minutes)(définir la somme mise en jeu)."
     }
 }
-let lotteryStore = {}
 
 
-async function start (message, args, client, db) {
+async function start (message, args, client, db, tools) {
     let challenge = await db.collection('lotteries').findOne({id: message.member.id, type: 'lottery'})
     if (challenge) return message.channel.send("Vous ne pouvez pas lancer deux loteries en même temps, attendez sa fin ou annulez la avant d'en lancer une nouvelle.")
 
@@ -45,11 +44,12 @@ async function start (message, args, client, db) {
     let memberInfo = await db.collection('members').findOne({id: message.member.id})
     if (!memberInfo || memberInfo.bolducs < args[1]) return message.channel.send("Vous n'avez pas assez de bolducs pour lancer cette loterie.")
 
+    let time = new Date(); time.setTime(time.getTime() + args[0]*60000)
     await db.collection('members').updateOne({id: message.member.id}, {$inc: {bolducs: -args[1], dailyLoss: +args[1]}})
-    await db.collection('lotteries').insertOne({id: message.member.id, type: 'lottery', amount: +args[1], entrants: [message.member.id], start: (new Date().getTime() + args[0]*60000)})
-
+    await db.collection('lotteries').insertOne({id: message.member.id, type: 'lottery', amount: +args[1], entrants: [message.member.id], start: time})
+    await db.collection('scheduler').insertOne({id: message.author.id, name: 'LotteryDraw', date: time, channel: message.channel.id})
     message.channel.send(`Vous venez de lancer une loterie de ${args[1]} Bolduc${args[1] > 1 ? 's' : ''} <:1B:805427963972943882>`)
-    lotteryStore[message.member.id] = setTimeout(draw, 60000*(+args[0]), message, db, client)
+    await tools.schedulerUpdate (db, client)
 }
 async function list (message, args, client, db) {
     let challengers = [],
@@ -127,53 +127,9 @@ async function cancel (message, args, client, db) {
     let lottery = await db.collection('lotteries').findOne({id: message.member.id, type: 'lottery'})
     if (!lottery) return message.channel.send("Vous n'avez lancé aucune loterie, vous ne pouvez rien annuler.")
 
-    await deleteAndGiveBack (db, lottery)
-    message.channel.send('La loterie est annulé, les paris ont été reversés aux participants.')
-}
-async function deleteAndGiveBack (db, lottery) {
+    await db.collection('scheduler').deleteOne({id: lottery.id, name: 'LotteryDraw'})
     await db.collection('lotteries').deleteOne({id: lottery.id, type: 'lottery'})
     await db.collection('members').updateMany({id: {$in: lottery.entrants}}, {$inc: {bolducs: lottery.amount, dailyLoss: -lottery.amount}})
-}
 
-
-async function draw (message, db, client) {
-    delete lotteryStore[message.member.id]
-    let lottery = await db.collection('lotteries').findOne({id: message.member.id, type: 'lottery'}),
-        winner
-    if (!lottery) return message.channel.send('Erreur. Il semblerait que la loterie ait été supprimée.')
-    let entrants = lottery.entrants.length
-
-    let opponent = await message.guild.members.fetch(lottery.id)
-    if (!opponent) {
-        await deleteAndGiveBack (db, lottery)
-        message.channel.send("Le membre ayant lancé ce défi semble avoir quitté le serveur, le défi vient d'être supprimé.")
-    }
-
-
-    while (true) {
-        //  Sélection au hasard du gagnant
-        //  + on recommence s'il n'est pas sur le serveur
-        //  + on annule s'il n'y a plus personne (sans redistribution)
-        if (lottery.entrants.length === 1) {
-            message.channel.send("La loterie ne contient pas assez de membre, le défi vient d'être supprimé.")
-            await deleteAndGiveBack (db, lottery)
-            return
-        }
-
-        let result = lottery.entrants[Math.floor(Math.random() * lottery.entrants.length)]
-            winner = await message.guild.members.fetch(result)
-        if (!winner) lottery.entrants.slice(result, 1)
-        else break
-    }
-
-
-    let amount = lottery.amount * entrants
-    await db.collection('lotteries').deleteOne({id: lottery.id, type: 'lottery'})
-    await db.collection('members').updateOne({id: winner.id}, {$inc: {bolducs: amount, dailyBenefit: amount}})
-    await message.channel.send(`${winner} à remporté les Bolducs ! Soit ${amount} Bolducs <:1B:805427963972943882>`)
-    client.channels.cache.get('804480235919114320').send(new Discord.MessageEmbed()
-        .setColor('#900000')
-        .setTitle('Loterie')
-        .setDescription(`**${winner.user.tag}** a remporté ${amount} bolducs en gagnant une loterie.`)
-    )
+    message.channel.send('La loterie est annulé, les paris ont été reversés aux participants.')
 }

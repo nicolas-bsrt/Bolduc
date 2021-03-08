@@ -15,9 +15,10 @@ async function fct (message, args, client, db, tools) {
 
 
 
-    if (!memberInfo || !memberInfo.lastClaim || memberInfo.lastClaim > (48 * 3600000 + date)) memberInfo.claimCount = 1
-    else if (memberInfo.lastClaim > date - (24 * 3600000)) return message.channel.send(`Il est encore trop tôt pour récupérer vos bolducs, revenez dans ${tools.howManyLast (date, memberInfo.lastClaim + (24 * 3600000))}.`)
-    else memberInfo.claimCount = memberInfo.claimCount + 1 || 1
+    if (!memberInfo || !memberInfo.lastClaim || !memberInfo.claimCount) memberInfo.claimCount = 1
+    else if (date > memberInfo.lastClaim + (48 * 3600000)) memberInfo.claimCount = 1
+    else if (date > memberInfo.lastClaim + (24 * 3600000)) memberInfo.claimCount += 1
+    else return message.channel.send(`Il est encore trop tôt pour récupérer vos bolducs, revenez dans ${tools.howManyLast (date, memberInfo.lastClaim + (24 * 3600000))}.`)
 
 
     memberInfo.lastClaim = date

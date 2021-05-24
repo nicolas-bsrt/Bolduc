@@ -174,7 +174,7 @@ async function MegaLotteryDraw (client, db, event) {
 
     let amount = lottery.amount * entrants * 2
     await db.collection('lotteries').deleteOne({id: lottery.id, type: 'megaLottery'})
-    await db.collection('members').updateOne({id: winner.id}, {$inc: {bolducs: amount, dailyBenefit: amount}})
+    await db.collection('members').updateOne({id: winner.id}, {$inc: {bolducs: amount}})
     await client.channels.cache.get('804768383626903552').send(`${winner} à remporté les Bolducs ! Soit ${amount} Bolducs <:1B:805427963972943882>`)
     client.channels.cache.get('804480347592589312').send(new Discord.MessageEmbed()
         .setColor('#003BFF')
@@ -206,7 +206,7 @@ async function LotteryDraw (client, db, event) {
 
     let amount = lottery.amount * entrants
     await db.collection('lotteries').deleteOne({id: lottery.id, type: 'lottery'})
-    await db.collection('members').updateOne({id: winner.id}, {$inc: {bolducs: amount, dailyBenefit: amount}})
+    await db.collection('members').updateOne({id: winner.id}, {$inc: {bolducs: amount}})
     await client.channels.cache.get(event.channel).send(`${winner} à remporté les Bolducs ! Soit ${amount} Bolducs <:1B:805427963972943882>`)
     client.channels.cache.get('804480347592589312').send(new Discord.MessageEmbed()
         .setColor('#900000')

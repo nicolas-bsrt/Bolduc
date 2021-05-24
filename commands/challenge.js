@@ -109,7 +109,7 @@ async function draw (message, db, challenge, client) {
             looser = opponent
         }
 
-        await db.collection('members').updateOne({id: winner.id}, {$inc: {bolducs: (challenge.amount*2), dailyBenefit: (challenge.amount*2)}})
+        await db.collection('members').updateOne({id: winner.id}, {$inc: {bolducs: (challenge.amount*2)}})
         await message.channel.send(`${winner} à remporté les Bolducs ! Soit ${challenge.amount*2} Bolducs <:1B:805427963972943882>`)
         client.channels.cache.get('804480235919114320').send(new Discord.MessageEmbed()
             .setColor('#FF3B00')

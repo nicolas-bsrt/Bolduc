@@ -112,6 +112,16 @@ client.on('guildMemberRemove', async  (member) => {
     await member.guild.channels.cache.get('802951636850180110').send(`${member} a quitté le serveur, à bientôt ! :wave:`)
     await member.guild.channels.cache.get('814595547633287178').send(`${member} vient de quitter le serveur.`)
 })
+client.on('guildMemberUpdate', async (oldMember, newMember) => {
+    if (newMember.guild.id !== '802951636850180107') return
+    if (oldMember.premiumSinceTimestamp === newMember.premiumSinceTimestamp) return
+
+    await db.collection('members').updateOne(
+        {id: newMember.id},
+        {$inc: {bolducs: 25000, dailyBenefit: 25000}},
+        {upsert: true})
+    await newMember.guild.channels.cache.get('804768383626903552').send(`${newMember} joueur vient de booster le serveur !\nIl gagne 25 000 Bolducs.`)
+})
 
 client.on("messageReactionAdd", (reaction, user) => {
     if (!user || user.bot || client.user.id !== reaction.message.author.id) return

@@ -109,7 +109,8 @@ client.on('guildMemberAdd', async (member) => {
 })
 client.on('guildMemberRemove', async  (member) => {
     if (member.guild.id !== '802951636850180107') return
-    member.guild.channels.cache.get('802951636850180110').send(`${member} a quitté le serveur, à bientôt ! :wave:`)
+    await member.guild.channels.cache.get('802951636850180110').send(`${member} a quitté le serveur, à bientôt ! :wave:`)
+    await member.guild.channels.cache.get('814595547633287178').send(`${member} vient de quitter le serveur.`)
 })
 
 client.on("messageReactionAdd", (reaction, user) => {

@@ -129,7 +129,40 @@ client.on("messageReactionRemove", (reaction, user) => {
         return embedSwitch (reaction, user)
 })
 client.on("message", async message => {
-    if (message.author.bot || message.channel.type !== "text") return
+    if (message.author.bot) {
+        if (message.author.id === '302050872383242240') {
+            // Does the bot respond with a emebed ? If not it's useless.
+            let VerificationEmbed = message.embeds
+            if (!VerificationEmbed || !VerificationEmbed[0] || !VerificationEmbed[0].description) return
+
+
+            // Does the embed contain a description ? If not we don't care.
+            // If the description does not include "Bumb effectué" then the member does not deserve the reward
+            let VerificationContent = VerificationEmbed[0].description
+            if (!VerificationContent || !VerificationContent.includes('Bump effectué !')) return
+
+
+            // Find the member that is mentioned in this message by its ID
+            let BumperID = VerificationContent.match(/(?<=<@)\d{18}(?=>)/gi)
+            if (!BumperID || !BumperID[0]) return
+
+
+            // Find the member in the guild using its ID
+            let member = message.guild.members.cache.get(BumperID[0])
+            if (!member) return
+
+
+            // Add him the reward of 1000 pieces
+            await db.collection('members').updateOne(
+                {id: member.id},
+                {$inc: {bolducs: 1000}},
+                {upsert: true})
+            await message.channel.send(`Merci pour le bump ${member.displayName}, voici 1000 <:1B:805427963972943882> en récompense.`)
+            return
+        }
+        else return
+    }
+    if (message.channel.type !== "text") return
     if (!message.content.startsWith(process.env.PREFIX)) return msgToBolducs (message)
 
 

@@ -84,7 +84,7 @@ client.on('guildMemberAdd', async (member) => {
             invites[inv.code] = inv.uses
             await db.collection('members').updateOne(
                 {id: inv.inviter.id},
-                {$inc: {bolducs: 1000}},
+                {$inc: {bolducs: 1000, dailyBenefit: 1000}},
                 {upsert: true})
             inviter = inv.inviter
             let inviteMember = member.guild.members.cache.get(inv.inviter.id),
@@ -156,7 +156,7 @@ client.on("message", async message => {
             // Add him the reward of 1000 pieces
             await db.collection('members').updateOne(
                 {id: member.id},
-                {$inc: {bolducs: 1000}},
+                {$inc: {bolducs: 1000, dailyBenefit: 1000}},
                 {upsert: true})
             await message.channel.send(`Merci pour le bump ${member.displayName}, voici 1000 <:1B:805427963972943882> en récompense.`)
             return

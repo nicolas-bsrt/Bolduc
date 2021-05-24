@@ -166,9 +166,9 @@ client.on("message", async message => {
             // Add him the reward of 1000 pieces
             await db.collection('members').updateOne(
                 {id: member.id},
-                {$inc: {bolducs: 1000, dailyBenefit: 1000}},
+                {$inc: {bolducs: 300, dailyBenefit: 300}},
                 {upsert: true})
-            await message.channel.send(`Merci pour le bump ${member.displayName}, voici 1000 <:1B:805427963972943882> en récompense.`)
+            await message.channel.send(`Merci pour le bump ${member.displayName}, voici 300 <:1B:805427963972943882> en récompense.`)
             return
         }
         else return

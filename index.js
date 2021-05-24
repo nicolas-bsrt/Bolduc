@@ -114,6 +114,8 @@ client.on('guildMemberRemove', async  (member) => {
 })
 client.on('guildMemberUpdate', async (oldMember, newMember) => {
     if (newMember.guild.id !== '802951636850180107') return
+    if (newMember.premiumSinceTimestamp !== null) return
+    if (newMember.premiumSinceTimestamp !== 0) return
     if (oldMember.premiumSinceTimestamp === newMember.premiumSinceTimestamp) return
 
     await db.collection('members').updateOne(
@@ -126,7 +128,7 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
 client.on("messageReactionAdd", (reaction, user) => {
     if (!user || user.bot || client.user.id !== reaction.message.author.id) return
     if (settings.shop.includes(reaction.message.id) && ['👑','💎','🪧','📣','📡'].includes(reaction.emoji.name))
-        return commands.shop.shop (reaction, user, db, settings)
+        return commands.shop.shop (reaction, user, db)
     if (reaction.message.channel.id === '804768383626903552' && reaction.emoji.name === "🎉")
         return commands.megaloterie.add (reaction, user, db, tools)
     if (reaction.message.embeds)

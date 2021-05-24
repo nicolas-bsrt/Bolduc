@@ -10,20 +10,31 @@ module.exports = {
 
 async function fct (message, args, client, db, tools) {
     let memberInfo = await db.collection('members').findOne({id: message.member.id}),
-        date = new Date().getTime(),
-        amount = 50
-
-
+        amount = 50,
+        date = new Date(),
+        yesterday = new Date()
+        yesterday.setDate(yesterday.getDate() - 1)
 
     if (!memberInfo || !memberInfo.lastClaim || !memberInfo.claimCount) memberInfo.claimCount = 1
-    else if (date > memberInfo.lastClaim + (48 * 3600000)) memberInfo.claimCount = 1
-    else if (date > memberInfo.lastClaim + (24 * 3600000)) memberInfo.claimCount += 1
-    else return message.channel.send(`Il est encore trop tôt pour récupérer vos bolducs, revenez dans ${tools.howManyLast (date, memberInfo.lastClaim + (24 * 3600000))}.`)
+    else {
+        let lastClaim = new Date(memberInfo.lastClaim)
+        if (lastClaim.getDate() === date.getDate() && lastClaim.getMonth() === date.getMonth() && lastClaim.getFullYear() === date.getFullYear()) {
+            // Look if lastClaim is today
+            let Tomorrow = new Date()
+                Tomorrow.setTime(Tomorrow.getTime() + 86400000 - Tomorrow.getTime() % 86400000)
+            let howManyLast = tools.howManyLast(date, Tomorrow)
+            return message.channel.send(`Il est encore trop tôt pour récupérer vos bolducs, revenez dans ${howManyLast}.`)
+            }
+        else if (lastClaim.getDate() === yesterday.getDate() && lastClaim.getMonth() === yesterday.getMonth() && lastClaim.getFullYear() === yesterday.getFullYear())
+            // Look if Yesterday is the same day, month and year that "lastClaim"
+            memberInfo.claimCount += 1
+        else memberInfo.claimCount = 1
+    }
 
 
-    memberInfo.lastClaim = date
+    memberInfo.lastClaim = date.getTime()
     memberInfo.claimCount = memberInfo.claimCount || 0
-    amount = amount * (memberInfo.claimCount > 20 ? 20 : memberInfo.claimCount)
+    amount = amount * (memberInfo.claimCount > 100 ? 100 : memberInfo.claimCount)
 
 
 

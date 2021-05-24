@@ -45,7 +45,7 @@ async function fct (message, args, client, db) {
     )
     client.channels.cache.get('805419525486936074').send(
         new Discord.MessageEmbed()
-            .setColor('#0BFF00')
+            .setColor('#ff0000')
             .setTitle('Retrait  de bolducs')
             .setDescription(`**${message.author.tag}** a retiré ${amount} bolducs au compte de ${member.user.tag}.` + (motif ? ('\n__Motif :__*' + motif + '*') : ''))
     )

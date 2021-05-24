@@ -37,6 +37,6 @@ async function fct (message, args, client, db) {
     client.channels.cache.get('804480235919114320').send(new Discord.MessageEmbed()
         .setColor('#00FF60')
         .setTitle('Dons de bolducs')
-        .setDescription(`**${member.user.tag}** a reçut ${amount} bolducs de la part de **${message.author.tag}**.`)
+        .setDescription(`**${member.user.tag}** a reçu ${amount} bolducs de la part de **${message.author.tag}**.`)
     )
 }

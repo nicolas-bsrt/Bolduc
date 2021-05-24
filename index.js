@@ -107,6 +107,11 @@ client.on('guildMemberAdd', async (member) => {
     }
     await db.collection('members').insertOne({id: member.id, inviter: inviter})
 })
+client.on('guildMemberRemove', async  (member) => {
+    if (member.guild.id !== '802951636850180107') return
+    member.guild.channels.cache.get('802951636850180110').send(`${member} a quitté le serveur, à bientôt ! :wave:`)
+})
+
 client.on("messageReactionAdd", (reaction, user) => {
     if (!user || user.bot || client.user.id !== reaction.message.author.id) return
     if (settings.shop.includes(reaction.message.id) && ['👑','💎','🪧','📣','📡'].includes(reaction.emoji.name))

@@ -60,12 +60,12 @@ async function fct (message, args, client, db) {
 async function shop (reaction, user, db) {
     let item = Object.values(objects).find(o => o.emoji === reaction.emoji.name)
     if (!item) return
+    await reaction.users.remove(user)
 
     let inventory = await db.collection('members').findOne({id: user.id}), list
-    if (!inventory || inventory.bolducs < item.price) {
+    if (!inventory || !inventory.bolducs || inventory.bolducs < item.price) {
         user.send(`Vous n'avez pas assez de bolducs acheter ceci (${reaction.emoji.name}).`)
-        await reaction.users.remove(user)
-        return true
+        return
     }
     await db.collection('members').updateOne({id: user.id}, {$inc: {bolducs: -item.price, dailyLoss: item.price}})
 
@@ -94,5 +94,4 @@ async function shop (reaction, user, db) {
     }
     reaction.message.guild.channels.cache.get('804480347592589312').send(`> ${user.tag} a acheté "${item.name}".`)
     user.send(item.msg)
-    await reaction.users.remove(user)
 }

@@ -11,8 +11,8 @@ module.exports = {
 async function fct (message, args, client, db, tools) {
     let memberInfo = await db.collection('members').findOne({id: message.member.id}),
         amount = 50,
-        date = new Date(),
-        yesterday = new Date()
+        date = tools.timeShiftDate(),
+        yesterday = tools.timeShiftDate()
         yesterday.setDate(yesterday.getDate() - 1)
 
     if (!memberInfo || !memberInfo.lastClaim || !memberInfo.claimCount) memberInfo.claimCount = 1
@@ -20,7 +20,7 @@ async function fct (message, args, client, db, tools) {
         let lastClaim = new Date(memberInfo.lastClaim)
         if (lastClaim.getDate() === date.getDate() && lastClaim.getMonth() === date.getMonth() && lastClaim.getFullYear() === date.getFullYear()) {
             // Look if lastClaim is today
-            let Tomorrow = new Date()
+            let Tomorrow = tools.timeShiftDate
                 Tomorrow.setTime(Tomorrow.getTime() + 86400000 - Tomorrow.getTime() % 86400000)
             let howManyLast = tools.howManyLast(date, Tomorrow)
             return message.channel.send(`Il est encore trop tôt pour récupérer vos bolducs, revenez dans ${howManyLast}.`)

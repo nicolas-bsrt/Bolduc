@@ -2,13 +2,21 @@ const Discord = require("discord.js")
 let nextEvent
 
 module.exports = {
+    timeShiftDate: timeShiftDate,
     date: date,
     howManyLast: howManyLast,
     schedulerUpdate: schedulerUpdate
 }
 
+function timeShiftDate (date) {
+    date = date || new Date ()
+    date.setHours(date.getHours() + process.env.TimeZoneOffset)
+    console.log(typeof process.env.TimeZoneOffset)
+    console.log(date)
+    return date
+}
 function date () {
-    let date= new Date(),
+    let date = timeShiftDate(),
     dd = date.getDate(),
     dm = date.getMonth(),
     dh = date.getHours(),
@@ -46,7 +54,7 @@ async function schedulerUpdate (db, client) {
         nextEvent = setTimeout(() => {schedulerUpdate(db, client)}, 120*60000)
     }
     else {
-        let diff = event.date.getTime() - new Date().getTime()
+        let diff = event.date.getTime() - timeShiftDate().getTime()
         // On fait l'event demandé
         if (diff < 0) {
             // Evènement en retard. Début de l'action
@@ -88,7 +96,7 @@ async function schedulerAction (client, db, event) {
 
 // Scheduled functions
 async function SchDaily (client, db) {
-    let tomorrow = new Date()
+    let tomorrow = timeShiftDate()
         tomorrow.setDate(tomorrow.getDate() + 1)
         tomorrow.setMinutes(0)
         tomorrow.setHours(0)
@@ -112,8 +120,8 @@ async function SchDaily (client, db) {
     )
 }
 async function SchBalloonPop (client, db) {
-    let respawn = new Date(),
-        pop = new Date(),
+    let respawn = timeShiftDate(),
+        pop = timeShiftDate(),
         duration = 10, // Time the object will last (in minutes)
         type,
         appearMessage

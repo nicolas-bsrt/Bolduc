@@ -38,7 +38,7 @@ async function fct (message, args, client, db, tools) {
 
 
     if (message.channel.id !== '804768383626903552') message.channel.send('Je lance la Mégaloterie dans <#804768383626903552>.')
-    let time = new Date(); time.setTime(time.getTime() + args[0]*60000)
+    let time = tools.timeShiftDate(); time.setTime(time.getTime() + args[0]*60000)
     let announce = await client.channels.cache.get('804768383626903552').send(`@everyone Mégaloterie X2 !!! Appuyez sur 🎉 pour participer! (Prix ${args[1]} Bolducs <:1B:805427963972943882>)\nLe total des Bolducs mit en jeu sera multiplié par deux et le vainqueur emportera le total !\n\nVous avez ${args[0]} minute${args[0] > 1 ? "s" : ""} pour participer.`)
     await db.collection('lotteries').insertOne({id: message.member.id, type: 'megaLottery', amount: +args[1], entrants: [], message: announce.id, start: time})
     await announce.react('🎉')
@@ -59,7 +59,7 @@ async function add (reaction, user, db, tools) {
 
     await db.collection('members').updateOne({id: user.id}, {$inc: {bolducs: -lottery.amount, dailyLoss: lottery.amount}})
     await db.collection('lotteries').updateOne({message: reaction.message.id, type: 'megaLottery'}, {$push: {entrants: user.id}})
-    await user.send(`Vous venez de vous inscrire dans une méga-loterie, tirage dans ${tools.howManyLast(new Date().getTime(), lottery.start)}.`)
+    await user.send(`Vous venez de vous inscrire dans une méga-loterie, tirage dans ${tools.howManyLast(tools.timeShiftDate().getTime(), lottery.start)}.`)
 }
 async function cancel (message, args, client, db) {
     // annule une méga-loterie qu'on a lancé

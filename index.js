@@ -18,8 +18,8 @@ db.once('open', async () => {
     console.log("\x1b[0m", "\n   " + tools.date(), "\n   > Connexion à la base réussie")
 
     settings = await db.collection('settings').findOne({id: 'ID'})
-    let tomorrow = new Date(),
-        respawn = new Date()
+    let tomorrow = tools.timeShiftDate(),
+        respawn = tools.timeShiftDate()
         tomorrow.setDate(tomorrow.getDate() + 1)
         tomorrow.setMinutes(0)
         tomorrow.setHours(0)

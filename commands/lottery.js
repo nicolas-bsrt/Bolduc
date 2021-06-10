@@ -44,7 +44,7 @@ async function start (message, args, client, db, tools) {
     let memberInfo = await db.collection('members').findOne({id: message.member.id})
     if (!memberInfo || memberInfo.bolducs < args[1]) return message.channel.send("Vous n'avez pas assez de bolducs pour lancer cette loterie.")
 
-    let time = new Date(); time.setTime(time.getTime() + args[0]*60000)
+    let time = tools.timeShiftDate; time.setTime(time.getTime() + args[0]*60000)
     await db.collection('members').updateOne({id: message.member.id}, {$inc: {bolducs: -args[1], dailyLoss: +args[1]}})
     await db.collection('lotteries').insertOne({id: message.member.id, type: 'lottery', amount: +args[1], entrants: [message.member.id], start: time})
     await db.collection('scheduler').insertOne({id: message.author.id, name: 'LotteryDraw', date: time, channel: message.channel.id})
@@ -94,7 +94,7 @@ async function accept (message, args, client, db, tools) {
 
     await db.collection('members').updateOne({id: message.member.id}, {$inc: {bolducs: -lottery.amount, dailyLoss: lottery.amount}})
     await db.collection('lotteries').updateOne({id: challenger.id, type: 'lottery'}, {$push: {entrants: message.member.id}})
-    await message.channel.send(`Vous venez d'accepter la loterie de ${challenger.displayName}, début dans ${tools.howManyLast(new Date().getTime(), lottery.start)}.`)
+    await message.channel.send(`Vous venez d'accepter la loterie de ${challenger.displayName}, début dans ${tools.howManyLast(tools.timeShiftDate.getTime(), lottery.start)}.`)
 
 }
 

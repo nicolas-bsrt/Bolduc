@@ -13,7 +13,7 @@ async function shot (message, args, client, db, tools) {
     let balloons = await db.collection('scheduler').find({name: 'balloonDisappear'})
     balloons = await balloons.toArray()
     if (balloons.length < 1) {
-        let date = new Date()
+        let date = tools.timeShiftDate()
         if (date.getHours() > 22) return message.channel.send('Je ne vois aucune étoile dans le ciel ! Tu ferais mieux de regarder encore quelques minutes...')
         else return message.channel.send('Je ne vois aucun ballon à l\'horizon ! Tu ferais mieux de regarder encore quelques minutes...')
     }

@@ -10,9 +10,7 @@ module.exports = {
 
 function timeShiftDate (date) {
     date = date || new Date ()
-    date.setHours(date.getHours() + process.env.TimeZoneOffset)
-    console.log(typeof process.env.TimeZoneOffset)
-    console.log(date)
+    date.setHours(date.getHours() + parseInt(process.env.TimeZoneOffset))
     return date
 }
 function date () {

@@ -20,7 +20,7 @@ async function fct (message, args, client, db, tools) {
         let lastClaim = new Date(memberInfo.lastClaim)
         if (lastClaim.getDate() === date.getDate() && lastClaim.getMonth() === date.getMonth() && lastClaim.getFullYear() === date.getFullYear()) {
             // Look if lastClaim is today
-            let Tomorrow = tools.timeShiftDate
+            let Tomorrow = tools.timeShiftDate()
                 Tomorrow.setTime(Tomorrow.getTime() + 86400000 - Tomorrow.getTime() % 86400000)
             let howManyLast = tools.howManyLast(date, Tomorrow)
             return message.channel.send(`Il est encore trop tôt pour récupérer vos bolducs, revenez dans ${howManyLast}.`)
